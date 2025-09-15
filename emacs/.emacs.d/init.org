@@ -1,0 +1,659 @@
+
+# -*- after-save-hook: (org-babel-tangle); before-save-hook: (delete-trailing-whitespace) -*-
+#+TITLE: Emacs Org Config File
+#+AUTHOR: Omer Arif
+#+STARTUP: overview
+#+PROPERTY: header-args:emacs-lisp :exports code :results none :tangle ~/.emacs.d/init.el
+
+* initialiazation
+#+BEGIN_SRC emacs-lisp
+    ;; This must be the VERY first thing in your configuration
+   (setq package-enable-at-startup nil)
+  (setq package--init-file-ensured t)
+
+    ;; Auto-save and Backup Configuration
+  (make-directory "~/.emacs.d/auto-save-list" t)
+  (setq backup-directory-alist `(("." . "~/.emacs.d/auto-save-list")))
+  (setq auto-save-file-name-transforms `((".*" "~/.emacs.d/auto-save-list" t)))
+  (setq auto-save-list-file-prefix "~/.emacs.d/auto-save-list/.saves-")
+  (setq version-control t)
+  (setq kept-new-versions 10)
+  (setq kept-old-versions 2)
+  (setq delete-old-versions t)
+#+END_SRC
+
+* UI
+#+BEGIN_SRC emacs-lisp
+    (setq-default inhibit-startup-message t    ; Will not show splash
+                  visible-bell t                      ; Flash on errors
+                  fill-column 100                     ; Wrap at 100 chars
+                  tab-width 4                         ; Tab width
+                  initial-scratch-message ";; マー様、ようこそ！\n\n")
+
+            (menu-bar-mode -1)       ;; hide menu bar
+            (tool-bar-mode -1)       ;; hide tool bar
+            (scroll-bar-mode -1)     ;; hide scroll bar
+            (fset 'yes-or-no-p 'y-or-n-p)
+          (delete-selection-mode 1)
+
+
+        (defun me/garbage-collect-maybe ()
+        (garbage-collect))
+
+      (add-hook 'focus-out-hook #'me/garbage-collect-maybe)
+    ;; Background
+            (add-to-list 'default-frame-alist '(alpha-background . 0.9))
+
+            (add-to-list 'safe-local-variable-values
+                         '(before-save-hook . delete-trailing-whitespace))
+
+          ;;(add-to-list 'safe-local-variable-values '(after-save-hook . (org-babel-tangle)))
+
+            ;; Line Numbers
+            (column-number-mode t) ; display character index at point
+          (global-display-line-numbers-mode t)
+          (setq display-line-numbers-type 'relative)
+          (dolist (mode '(org-mode-hook
+                          org-agenda-mode-hook
+          				term-mode-hook
+          				shell-mode-hook
+          				eshell-mode-hook
+          				vterm-mode-hook
+          				eat-mode))
+            (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+  ;; Force UTF-8 as the default everywhere
+  (set-language-environment "UTF-8")
+  (prefer-coding-system 'utf-8)
+  (set-selection-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (setq default-buffer-file-coding-system 'utf-8-unix)
+
+
+
+    
+#+END_SRC
+
+** Font
+#+BEGIN_SRC emacs-lisp
+  ;; Main English font
+  (set-frame-font "Iosevka 18" t t)
+  (add-to-list 'default-frame-alist '(font . "Iosevka 18"))
+
+  ;; Japanese font
+  (set-fontset-font t 'japanese-jisx0208 (font-spec :family "Noto Sans CJK JP" :size 18))
+  (set-fontset-font t 'han (font-spec :family "Noto Sans CJK JP" :size 18))
+
+#+END_SRC
+
+* Clipboard
+#+BEGIN_SRC emacs-lisp
+
+(setq async-shell-command-buffer "confirm-kill-process")
+
+;; Better support for clipboard and primary selection???
+;; (setq x-select-request-type
+;;       '(UTF8_STRING COMPOUND_TEXT STRING text/plain\;charset=utf-8))
+
+(when (getenv "WAYLAND_DISPLAY")
+  (setq wl-copy-process nil)
+  (defun wl-copy (text)
+    (setq wl-copy-process (make-process :name "wl-copy"
+                                        :buffer nil
+                                        :command '("wl-copy" "-f" "-n")
+                                        :connection-type 'pipe
+                                        :noquery t))
+    (process-send-string wl-copy-process text)
+    (process-send-eof wl-copy-process))
+  (defun wl-paste ()
+    (if (and wl-copy-process (process-live-p wl-copy-process))
+        nil                             ; should return nil if we're the current paste owner
+      (shell-command-to-string "wl-paste -n | tr -d \r")))
+  (setq interprogram-cut-function 'wl-copy)
+  (setq interprogram-paste-function 'wl-paste))
+
+  #+END_SRC
+
+* Package manager
+#+BEGIN_SRC emacs-lisp
+
+  (defvar elpaca-installer-version 0.11)
+  (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+  (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+  (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+  (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                                :ref nil :depth 1 :inherit ignore
+                                :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                                :build (:not elpaca--activate-package)))
+  (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+         (build (expand-file-name "elpaca/" elpaca-builds-directory))
+         (order (cdr elpaca-order))
+         (default-directory repo))
+    (add-to-list 'load-path (if (file-exists-p build) build repo))
+    (unless (file-exists-p repo)
+      (make-directory repo t)
+      (when (<= emacs-major-version 28) (require 'subr-x))
+      (condition-case-unless-debug err
+          (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                    ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                    ,@(when-let* ((depth (plist-get order :depth)))
+                                                        (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                    ,(plist-get order :repo) ,repo))))
+                    ((zerop (call-process "git" nil buffer t "checkout"
+                                          (or (plist-get order :ref) "--"))))
+                    (emacs (concat invocation-directory invocation-name))
+                    ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                          "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                    ((require 'elpaca))
+                    ((elpaca-generate-autoloads "elpaca" repo)))
+              (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+            (error "%s" (with-current-buffer buffer (buffer-string))))
+        ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+    (unless (require 'elpaca-autoloads nil t)
+      (require 'elpaca)
+      (elpaca-generate-autoloads "elpaca" repo)
+      (let ((load-source-file-function nil)) (load "./elpaca-autoloads"))))
+  (add-hook 'after-init-hook #'elpaca-process-queues)
+  (elpaca `(,@elpaca-order))
+
+  ;; Install use-package support
+  (elpaca elpaca-use-package
+    (elpaca-use-package-mode))
+    
+ #+END_SRC
+
+* Packages
+#+BEGIN_SRC emacs-lisp
+  (put 'dired-find-alternate-file 'disabled nil)
+
+  ;;Parhenthesis
+  (use-package smartparens
+    :ensure t
+    :hook ((prog-mode text-mode markdown-mode org-mode) . smartparens-mode)
+    :config
+    (require 'smartparens-config)
+    (show-smartparens-global-mode 1))
+
+  (use-package vertico
+    :ensure t
+    :init
+    (vertico-mode)
+    :config
+    (setq vertico-cycle t)
+    ;; Add these lines for alphabetical sorting:
+    (setq read-file-name-completion-ignore-case t
+          read-buffer-completion-ignore-case t
+          completion-ignore-case t))
+
+
+  (use-package corfu
+    :ensure t
+    :custom
+    (corfu-auto t)              ; Enable auto-completion
+    (corfu-auto-prefix 1)       ; Trigger after 2 chars
+    (corfu-auto-delay 0.1)      ; Faster popup
+    :init
+    (global-corfu-mode)
+    (corfu-popupinfo-mode))  ;;Show documentation
+
+  (use-package cape
+    :ensure t
+    :init
+    ;; Add dabbrev to default CAPFs
+    (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+
+    ;; Ensure dabbrev works in Org mode as well
+    (add-hook 'org-mode-hook
+              (lambda ()
+                (add-to-list 'completion-at-point-functions #'cape-dabbrev))))  ;; buffer words
+
+
+  (use-package orderless
+    :ensure t ; Let Elpaca handle the installation from its default sources (Melpa)
+    :custom
+    (completion-styles '(orderless basic))) ; Set the completion style
+
+  (use-package marginalia
+    :ensure t
+    :init ; This runs after the package is loaded
+    (marginalia-mode))
+
+  (use-package which-key
+    :ensure t
+    :config
+    (setq which-key-idle-delay 0.3)
+    (which-key-mode))
+
+  (use-package undo-tree
+    :ensure t
+    :custom
+    (undo-tree-auto-save-history t)
+    (undo-tree-history-directory-alist '((".*" . "/home/omer/.emacs.d/undo")))
+    :config
+    (global-undo-tree-mode)
+    ;; Add C-x u keybinding for undo-tree-visualize
+    :bind ("C-x u" . undo-tree-visualize))
+
+  (use-package ligature
+    :ensure t
+    :config
+    (ligature-set-ligatures 't '("www"))
+    (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+    (ligature-set-ligatures 'prog-mode '("-<<" "-<" "-<-" "<--" "<---" "<<-" "<-" "->" "->>" "-->" "--->" "->-" ">-" ">>-"
+                                         "=<<" "=<" "=<=" "<==" "<===" "<<=" "<=" "=>" "=>>" "==>" "===>" "=>=" ">=" ">>="
+                                         "<->" "<-->" "<--->" "<---->" "<=>" "<==>" "<===>" "<====>" "::" ":::" "__"
+                                         "<~~" "</" "</>" "/>" "~~>" "==" "!=" "/=" "~=" "<>" "===" "!==" "!===" "=/=" "=!="
+                                         "<:" ":=" "*=" "*+" "<*" "<*>" "*>" "<|" "<|>" "|>" "<." "<.>" ".>" "+*" "=*" "=:"
+                                         ":>" "(*" "*)" "/*" "*/" "[|" "|]" "{|" "|}" "++" "+++" "\\/" "/\\" "|-" "-|" "<!--" "<!---"))
+    (global-ligature-mode))
+
+  (use-package all-the-icons
+    :if (display-graphic-p)
+    :ensure t)
+
+  (use-package all-the-icons-dired
+    :ensure t
+    :hook (dired-mode . all-the-icons-dired-mode))
+
+  (use-package all-the-icons-completion
+    :ensure t
+    :after (marginalia all-the-icons)
+    :init
+    ;; Comment out or remove this line to disable icons
+    ;;(all-the-icons-completion-mode)
+    )
+
+
+  (use-package transient
+    :ensure t)
+
+  (use-package magit
+    :ensure t)
+
+  (use-package ox-pandoc
+    :ensure t     ;; Elpaca will fetch it
+    :after org
+    :config
+    (require 'ox-pandoc))
+
+  (use-package vterm
+    :ensure t)
+
+  (elpaca-process-queues)
+
+
+ #+END_SRC
+** Mode line
+#+BEGIN_SRC emacs-lisp
+   (use-package doom-modeline
+     :ensure t
+     :init
+     (doom-modeline-mode 1)
+     :custom
+     ;; 1. File icon on very left
+     (doom-modeline-icon t)
+     (doom-modeline-major-mode-icon t)
+
+     (doom-modeline-height 40)
+
+     (doom-modeline-bar-width 4)
+     
+     ;; 2. Filename with full path after a little gap
+     (doom-modeline-buffer-file-name-style 'file-name) ; Show full file path
+     (doom-modeline-buffer-modification-icon t)
+  ;;   
+     ;; 3. Right side: Total lines : Current line : Column
+     (doom-modeline-percent-position nil)     ; Disable percentage
+     (doom-modeline-total-line-number t)      ; Show total lines
+     (doom-modeline-line-number-style 'total) ; Format as "total:current:column"
+     (doom-modeline-number-limit nil)         ; Always show line numbers
+     
+     ;; Remove all unwanted elements to make space for line info
+     (doom-modeline-buffer-encoding nil)
+     (doom-modeline-checker-simple-format t)
+     (doom-modeline-mu4e nil)
+     (doom-modeline-gnus nil)
+     (doom-modeline-irc nil)
+     (doom-modeline-enable-word-count nil)
+     (doom-modeline-time nil)                 ; Remove time display
+     (doom-modeline-vcs-max-length 0)         ; Remove version control info
+     
+  ;;   ;; Spacing and appearance
+     (doom-modeline-spc-face-overrides nil)
+     (doom-modeline-project-detection 'auto)
+     
+     ;; Additional settings for better spacing
+     (doom-modeline-indent-width 1)
+     (doom-modeline-modal-icon t)
+     (doom-modeline-minor-modes nil))         ; Remove minor modes display-line-numbers-type
+
+  #+END_SRC
+*** lamda line
+#+BEGIN_SRC emacs-lisp
+;; (use-package lambda-line
+;;   :ensure (:host github :repo "lambda-emacs/lambda-line")
+;;   :custom
+;;   (lambda-line-abbrev t)
+;;   (lambda-line-hspace " ")
+;;   (lambda-line-prefix t)
+;;   (lambda-line-prefix-padding nil)
+;;   (lambda-line-status-invert nil)
+;;   (lambda-line-gui-ro-symbol  " â¨")
+;;   (lambda-line-gui-mod-symbol " â¬¤")
+;;   (lambda-line-gui-rw-symbol  " â¯")
+;;   (lambda-line-vc-symbol " ï  ")
+;;   (lambda-line-space-top +0.1)
+;;   (lambda-line-space-bottom -0.1)
+;;   (lambda-line-symbol-position 0.02)
+;;   :config
+;;   (lambda-line-mode))
+
+;; ;; Configure faces AFTER lambda-line is fully loaded
+;; (with-eval-after-load 'lambda-line
+;;   (set-face-attribute 'lambda-line-active-status-MD nil :foreground "red")
+;;   (set-face-attribute 'lambda-line-active-status-RO nil :foreground "yellow") 
+;;   (set-face-attribute 'lambda-line-active-status-RW nil :foreground "green")
+;;   (set-face-attribute 'lambda-line-visual-bell nil :background "gray50")
+;;   (setq lambda-line-position 'bottom)
+;;   (when (eq lambda-line-position 'top)
+;;     (setq-default mode-line-format (list "%_"))
+;;     (setq mode-line-format (list "%_"))))
+ #+END_SRC
+
+** indent-line
+* Org-mode
+
+ #+BEGIN_SRC emacs-lisp
+
+             (use-package org
+               :ensure t  ; Let Elpaca handle the installation
+               :config
+               (org-babel-do-load-languages
+                'org-babel-load-languages
+                '((emacs-lisp . t)
+                  (python . t)      ; Added Python support
+             	 (shell . t)       ; Shell script support
+                  (latex . t)       ; Added LaTeX support
+             	 (js . t)          ; JavaScript support
+                  (C . t))))
+
+           ;; Org settings
+       (setq org-ellipsis "…"
+             org-src-window-setup 'current-window
+             org-startup-with-inline-images t
+             org-startup-with-latex-preview nil
+             org-image-actual-width nil
+             org-confirm-babel-evaluate nil
+             org-log-into-drawer t)
+
+       (add-hook 'org-mode-hook #'org-indent-mode)
+
+       ;; Set org faces AFTER org is loaded
+       (with-eval-after-load 'org
+         (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil)
+         (set-face-attribute 'org-table nil :family "Monospace"))
+
+       (use-package org-modern
+      :ensure t  ; Let Elpaca handle the installation
+      :config
+      (setq org-modern-hide-stars 'leading
+            org-auto-align-tags nil
+            org-tags-column 0
+            org-catch-invisible-edits 'show-and-error
+            org-special-ctrl-a/e t
+            org-insert-heading-respect-content t
+            org-hide-emphasis-markers t
+            org-pretty-entities t
+            org-modern-star 'replace)
+      (global-org-modern-mode))
+
+
+      (use-package org-super-agenda
+     :ensure t
+     :config
+     (setq org-agenda-files '("~/shr/org/todo.org")
+           org-agenda-span 1
+           org-agenda-start-day "+0d"
+           org-agenda-skip-timestamp-if-done t
+           org-agenda-skip-deadline-if-done t
+           org-agenda-skip-scheduled-if-done t
+           org-agenda-skip-scheduled-if-deadline-is-shown t
+           org-agenda-skip-timestamp-if-deadline-is-shown t
+           org-agenda-current-time-string "← now ────────────────────"
+           org-agenda-time-grid '((daily) () "" "")
+           org-agenda-timegrid-use-ampm t
+           org-agenda-prefix-format '((agenda . "  %?-2i %t ")
+                                      (todo . "  %-2i")
+                                      (tags . "  %-2i")
+                                      (search . "  %-2i"))
+           org-agenda-hide-tags-regexp ".*"
+           org-agenda-category-icon-alist
+           `(("Errands" ("💪") nil nil :ascent center)
+             ("Career" ("🎯") nil nil :ascent center)
+             ("Japanese" ("🎌") nil nil :ascent center)
+             ("Study" ("📚") nil nil :ascent center)
+             ("Life" ("🐳") nil nil :ascent center)
+             ("Contemplation" ("💫") nil nil :ascent center)
+             ("Wishlist" ("🤲") nil nil :ascent center)
+             ("Goals" ("🏆") nil nil :ascent center)))
+     
+     ;; Corrected face attribute setting
+     (set-face-attribute 'org-super-agenda-header nil
+                         :weight 'bold
+                         :height 1.05
+                         :box '(:line-width 2 :color "gray50"))
+     (org-super-agenda-mode))
+
+   ;; This should be OUTSIDE the use-package block
+   (setq org-super-agenda-groups
+         '((:name "Overdue ❗ "
+                  :order 2
+                  :scheduled past
+                  :face 'error)
+           (:name "Errands 💪 "
+                  :order 3
+                  :tag "errand")
+           (:name "Career 🎯 "
+                  :order 4
+                  :tag "career")
+           (:name "Study 📚 "
+                  :order 5
+                  :tag "study")
+           (:name "Life 🐳 "
+                  :order 6
+                  :tag "life")
+           (:name "Contemplation 💫 "
+                  :order 7
+                  :tag "thought")
+           (:name "Wishlist 🤲 "
+                  :order 8
+                  :tag "wish")
+           (:name "Goals 🏆 "
+                  :order 9
+                  :tag "goal")
+           (:name "Today 🗓️ "
+                  :order 1
+                  :time-grid t
+                  :date today
+                  :scheduled today
+                  :face 'warning)))
+
+
+   (use-package org-download
+  :ensure t
+  :custom
+  (org-download-heading-lvl nil)
+  (org-download-edit-cmd "krita %s")
+  (org-download-image-org-width 350)
+  (org-download-screenshot-method "grim -g \"$(slurp)\" %s"))
+
+(use-package olivetti
+  :ensure t
+  :hook
+  (org-mode . olivetti-mode)
+  (org-agenda-mode . olivetti-mode)
+  :custom
+  ;; Choose the wrapping width you like:
+  (olivetti-body-width 90))   ;; narrower than default
+
+
+ #+END_SRC
+
+* Programming
+ #+BEGIN_SRC emacs-lisp
+     (setq js-indent-level 4)
+
+     (use-package typescript-mode
+       :ensure t
+       :config
+       (setq typescript-indent-level 4))
+
+     (use-package tide
+       :ensure t
+       :config
+       (setq typescript-indent-level 4))
+
+     (use-package rainbow-delimiters
+       :ensure t
+       :hook (prog-mode . rainbow-delimiters-mode))
+
+   (require 'eglot)
+   (add-hook 'python-mode-hook 'eglot-ensure)
+   (add-hook 'html-mode-hook 'eglot-ensure)
+   (add-hook 'css-mode-hook 'eglot-ensure)
+   (add-hook 'js-mode-hook 'eglot-ensure)
+   (add-to-list 'eglot-server-programs '(python-mode . ("jedi-language-server")))
+   (add-to-list 'eglot-server-programs '((c-mode c++-mode) . ("clangd")))
+   (add-to-list 'eglot-server-programs '(html-mode . ("vscode-html-language-server" "--stdio")))
+   (add-to-list 'eglot-server-programs '(css-mode . ("vscode-css-language-server" "--stdio")))
+   (add-to-list 'eglot-server-programs '(js-mode . ("typescript-language-server" "--stdio")))
+   (setq eglot-send-changes-idle-time 0.5)
+   ;; Fix x0x0 (if present)
+   (defvar x0x0 nil "Temporary fix for undefined x0x0 variable")
+
+ #+END_SRC
+
+* JP
+ #+BEGIN_SRC emacs-lisp
+(use-package kanji-mode
+  :ensure t)
+
+(use-package anki-editor
+  :ensure t)
+ #+END_SRC
+
+* Themes
+ #+BEGIN_SRC emacs-lisp
+       ;; Remove or comment out the gruvbox package
+     ;; (use-package base16-theme 
+       ;; :ensure (:host github :repo "tinted-theming/base16-emacs")
+       ;; :config 
+        ;;(load-theme 'base16-default-dark t)
+       ;; (set-face-attribute 'mode-line nil :box nil ;;:overline nil :underline nil)
+       ;; (set-face-attribute 'mode-line-inactive nil ;;:box nil :overline nil :underline nil))
+   (use-package doom-themes
+     :ensure t
+     :config
+     (setq doom-theme 'doom-dracula)
+     (load-theme 'doom-dracula t))
+       ;; You can remove this line since Elpaca handles theme paths automatically
+       ;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+   ;;(load-theme 'omer-github t)
+ #+END_SRC
+ 
+* Keybinds
+#+BEGIN_SRC emacs-lisp
+  ;; Open hyprland directory
+  (defun my/open-hypr-directory ()
+    "Open the ~/.config/hypr directory in dired."
+    (interactive)
+    (dired "~/.config/hypr"))
+
+  (global-set-key (kbd "C-c h") 'my/open-hypr-directory)
+
+   ;; Open Niri config
+  (defun my/open-niri-config ()
+    "Open the config.kdl"
+    (interactive)
+    (dired "~/.config/niri/config.kdl"))
+
+  (global-set-key (kbd "C-c n") 'my/open-niri-config)
+
+
+  ;; Style.css for waybar
+  (defun my/open-waybar-style ()
+    "Open the Waybar style.css file."
+    (interactive)
+    (find-file "~/.config/waybar/style.css"))
+
+  (global-set-key (kbd "C-c w") 'my/open-waybar-style)
+
+  ;; For init.org
+  (defun my/open-init-org ()
+    "Open the init.org file."
+    (interactive)
+    (find-file "~/.emacs.d/init.org"))
+
+  (global-set-key (kbd "C-c i") 'my/open-init-org)
+
+
+  ;; Open ~/Documents/org directory
+  (defun my/open-org-directory ()
+    "Open the ~/Documents/org directory in dired."
+    (interactive)
+    (dired "~/Documents/org"))
+
+  (global-set-key (kbd "C-c C-o") 'my/open-org-directory)
+
+
+  (defun my/open-to-do-daily-org ()
+    "Open the to-do-daily.org directory in dired."
+    (interactive)
+    (dired "~/Documents/org/Important/to-do-daily.org"))
+
+  (global-set-key (kbd "C-c t") 'my/open-to-do-daily-org)
+
+  ;; Python code execution with F5
+  (global-set-key (kbd "<f5>") 
+                  (lambda () 
+                    (interactive)
+                    (if (string= (file-name-extension (buffer-file-name)) "py")
+                        (progn
+                          (python-shell-send-buffer)
+                          (python-shell-switch-to-shell))
+                      (message "Not a Python file"))))
+
+  ;; C code compilation and execution with F6
+  (defun run-c-code ()
+    "Compile and run C code in a separate buffer with F6"
+    (interactive)
+    (when (buffer-file-name)
+      (if (string= (file-name-extension (buffer-file-name)) "c")
+          (let ((output-file (file-name-sans-extension (buffer-file-name))))
+            ;; Save buffer first
+            (save-buffer)
+            ;; Compile and run in async shell
+            (async-shell-command 
+             (concat "gcc -o " (shell-quote-argument output-file) " " 
+                     (shell-quote-argument (buffer-file-name)) " && " 
+                     (shell-quote-argument output-file))
+             "*C Output*")
+            (switch-to-buffer-other-window "*C Output*"))
+        (message "Not a C file"))))
+
+  (global-set-key (kbd "<f6>") 'run-c-code)
+
+  ;; Lisp code execution with F7
+  (global-set-key (kbd "<f7>") 
+                  (lambda () 
+                    (interactive)
+                    (if (string= (file-name-extension (buffer-file-name)) "lisp")
+                        (compile (concat "clisp " (buffer-file-name)))
+                      (message "Not a Lisp file"))))
+
+  ;; Swap bindings
+  (global-set-key (kbd "C-x C-s") 'isearch-forward)
+  (global-set-key (kbd "C-s") 'save-buffer)
+
+
+ #+END_SRC
