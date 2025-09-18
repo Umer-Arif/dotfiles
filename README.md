@@ -1,6 +1,6 @@
 # Dotfiles
 
-My personal dotfiles managed with  [GNU Stow](https://www.gnu.org/software/stow/).
+My personal dotfiles managed with  [GNU Stow](https://www.gnu.org/software/stow/).<br>
 Install it with your package manager:
 
 ``` shell
@@ -9,19 +9,19 @@ sudo pacman -S stow
 
 ## 🔧 Setup
 
-1.Clone the repo:
+1. Clone the repo:
 
 ```
 git clone https://github.com/Umer-Arif/dotfiles.git ~/dotfiles
 ```
 
-2.Enter the directory:
+2. Enter the directory:
 
 ```
 cd ~/dotfiles
 ```
 
-3.Use GNU Stow to symlink the configs you want:
+3. Use GNU Stow to symlink the configs you want:
 
 ```
 stow niri
@@ -33,7 +33,7 @@ stow fuzzel
 
 ```
 
-This will create symlinks in ~/.config/... pointing to the files here.
+This will create symlinks in `~/.config/...` pointing to the files here.
 
 ## 📂 Structure
 
