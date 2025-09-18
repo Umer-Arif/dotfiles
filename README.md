@@ -1,7 +1,6 @@
 # Dotfiles
 
-My personal dotfiles managed with `GNU Stow`.
-You’ll need [GNU Stow](https://www.gnu.org/software/stow/) to manage the symlinks.
+My personal dotfiles managed with  [GNU Stow](https://www.gnu.org/software/stow/).
 Install it with your package manager:
 
 ``` shell
