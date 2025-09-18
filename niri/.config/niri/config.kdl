@@ -3,6 +3,7 @@
 spawn-at-startup "swww-daemon"
 spawn-at-startup "waybar"
 spawn-at-startup "niriswitcher"
+spawn-at-startup "mako"
 //spawn-at-startup "xwayland-satellite"
 //environment {
 //    DISPLAY ":0"
@@ -166,7 +167,7 @@ layout {
         // - CSS-like notation: "rgb(255, 127, 0)", rgba(), hsl() and a few others.
 
         // Color of the ring on the active monitor.
-        active-color "#9b67b3ff"
+        active-color "#727E63ff"
 
         // Color of the ring on inactive monitors.
         inactive-color "#505050"
@@ -223,7 +224,7 @@ layout {
         // window. These will also remove client-side shadows if the window
         // draws any.
         // 
-        // draw-behind-window true
+       // draw-behind-window true
 
         // You can change how shadows look. The values below are in logical
         // pixels and match the CSS box-shadow properties.
@@ -271,7 +272,11 @@ window-rule {
     opacity 0.9
     draw-border-with-background false
 }
-
+window-rule {
+    match app-id="niriswitcher"
+    opacity 0.7
+    draw-border-with-background false
+}
 
 
 // Uncomment this line to ask the clients to omit their client-side decorations if possible.
@@ -344,6 +349,11 @@ binds {
 	Mod+Shift+Q hotkey-overlay-title="Open powermenu: powermenu" { spawn "~/.local/bin/powermenu.zsh"; }
 	Alt+Tab repeat=false { spawn "niriswitcherctl" "show" "--window"; }
     Alt+Shift+Tab repeat=false { spawn "niriswitcherctl" "show" "--workspace"; }
+	Mod+Shift+B hotkey-overlay-title="Increase Brightness" { spawn "brightnessctl set +5%"; }
+	Mod+Alt+B   hotkey-overlay-title="Decrease Brightness" { spawn "brightnessctl set 5%-"; }
+	Mod+Ctrl+B  hotkey-overlay-title="Set Brightness 90%"  { spawn "brightnessctl set 90%"; }
+
+
 	Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "hyprlock"; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.

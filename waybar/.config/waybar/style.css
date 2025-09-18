@@ -20,19 +20,19 @@ window#waybar {
 
 /*-----module groups----*/
 .modules-right {
-    background-color: rgba(91, 58, 145, 0.8);
+    background-color: rgba(60, 80, 70, 0.8);
     /* Fixed syntax error */
     margin: 2px 10px 0 0;
 }
 
 .modules-center {
-    background-color: rgba(91, 58, 145, 0.8);
+    background-color: rgba(60, 80, 70, 0.8);
     margin: 2px 0 0 0;
 }
 
 .modules-left {
     margin: 2px 0 0 5px;
-    background-color: rgba(91, 58, 145, 0.8);
+    background-color: rgba(60, 80, 70, 0.8);
 }
 
 /*-----modules indv----*/

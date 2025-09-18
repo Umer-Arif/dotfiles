@@ -5,7 +5,6 @@
     // "width": 120, // Waybar width
     // Choose the order of the modules
     "modules-left": [
-        "hyprland/workspaces",
         "niri/workspaces"
     ],
     "modules-center": [
@@ -19,7 +18,7 @@
         "battery"
     ],
     // Modules configuration
-    "hyprland/workspaces": {
+    "workspaces": {
         "disable-scroll": true,
         "disable-markup": false,
         "all-outputs": true,

@@ -279,6 +279,13 @@
   (use-package vterm
     :ensure t)
 
+  (use-package markdown-mode
+  :ensure t
+  :mode ("README\\.md\\'" . gfm-mode)
+  :init (setq markdown-command "multimarkdown")
+  :bind (:map markdown-mode-map
+         ("C-c C-e" . markdown-do)))
+
   (elpaca-process-queues)
 
 
@@ -554,8 +561,8 @@
    (use-package doom-themes
      :ensure t
      :config
-     (setq doom-theme 'doom-dracula)
-     (load-theme 'doom-dracula t))
+     (setq doom-theme 'doom-molokai)
+     (load-theme 'doom-molokai t))
        ;; You can remove this line since Elpaca handles theme paths automatically
        ;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
    ;;(load-theme 'omer-github t)
@@ -563,97 +570,97 @@
  
 * Keybinds
 #+BEGIN_SRC emacs-lisp
-  ;; Open hyprland directory
-  (defun my/open-hypr-directory ()
-    "Open the ~/.config/hypr directory in dired."
-    (interactive)
-    (dired "~/.config/hypr"))
+   ;; Open hyprland directory
+   ;;(defun my/open-hypr-directory ()
+     ;;"Open the ~/.config/hypr directory in dired."
+     ;;(interactive)
+     ;;(dired "~/dotfiles/.config/hypr"))
 
-  (global-set-key (kbd "C-c h") 'my/open-hypr-directory)
+  ;; (global-set-key (kbd "C-c h") 'my/open-hypr-directory)
 
-   ;; Open Niri config
-  (defun my/open-niri-config ()
-    "Open the config.kdl"
-    (interactive)
-    (dired "~/.config/niri/config.kdl"))
+    ;; Open Niri config
+   (defun my/open-niri-config ()
+     "Open the config.kdl"
+     (interactive)
+     (find-file "~/dotfiles/niri/.config/niri/config.kdl"))
 
-  (global-set-key (kbd "C-c n") 'my/open-niri-config)
-
-
-  ;; Style.css for waybar
-  (defun my/open-waybar-style ()
-    "Open the Waybar style.css file."
-    (interactive)
-    (find-file "~/.config/waybar/style.css"))
-
-  (global-set-key (kbd "C-c w") 'my/open-waybar-style)
-
-  ;; For init.org
-  (defun my/open-init-org ()
-    "Open the init.org file."
-    (interactive)
-    (find-file "~/.emacs.d/init.org"))
-
-  (global-set-key (kbd "C-c i") 'my/open-init-org)
+   (global-set-key (kbd "C-c n") 'my/open-niri-config)
 
 
-  ;; Open ~/Documents/org directory
-  (defun my/open-org-directory ()
-    "Open the ~/Documents/org directory in dired."
-    (interactive)
-    (dired "~/Documents/org"))
+   ;; Style.css for waybar
+   (defun my/open-waybar-style ()
+     "Open the Waybar style.css file."
+     (interactive)
+     (find-file "~/dotfiles/waybar/.config/waybar/style.css"))
 
-  (global-set-key (kbd "C-c C-o") 'my/open-org-directory)
+   (global-set-key (kbd "C-c w") 'my/open-waybar-style)
+
+   ;; For init.org
+   (defun my/open-init-org ()
+     "Open the init.org file."
+     (interactive)
+     (find-file "~/dotfiles/emacs/.emacs.d/init.org"))
+
+   (global-set-key (kbd "C-c i") 'my/open-init-org)
 
 
-  (defun my/open-to-do-daily-org ()
-    "Open the to-do-daily.org directory in dired."
-    (interactive)
-    (dired "~/Documents/org/Important/to-do-daily.org"))
+   ;; Open ~/Documents/org directory
+   (defun my/open-org-directory ()
+     "Open the ~/Documents/org directory in dired."
+     (interactive)
+     (dired "~/Documents/org"))
 
-  (global-set-key (kbd "C-c t") 'my/open-to-do-daily-org)
+   (global-set-key (kbd "C-c C-o") 'my/open-org-directory)
 
-  ;; Python code execution with F5
-  (global-set-key (kbd "<f5>") 
-                  (lambda () 
-                    (interactive)
-                    (if (string= (file-name-extension (buffer-file-name)) "py")
-                        (progn
-                          (python-shell-send-buffer)
-                          (python-shell-switch-to-shell))
-                      (message "Not a Python file"))))
 
-  ;; C code compilation and execution with F6
-  (defun run-c-code ()
-    "Compile and run C code in a separate buffer with F6"
-    (interactive)
-    (when (buffer-file-name)
-      (if (string= (file-name-extension (buffer-file-name)) "c")
-          (let ((output-file (file-name-sans-extension (buffer-file-name))))
-            ;; Save buffer first
-            (save-buffer)
-            ;; Compile and run in async shell
-            (async-shell-command 
-             (concat "gcc -o " (shell-quote-argument output-file) " " 
-                     (shell-quote-argument (buffer-file-name)) " && " 
-                     (shell-quote-argument output-file))
-             "*C Output*")
-            (switch-to-buffer-other-window "*C Output*"))
-        (message "Not a C file"))))
+   (defun my/open-to-do-daily-org ()
+     "Open the to-do-daily.org directory in dired."
+     (interactive)
+     (find-file "~/Documents/org/Important/to-do-daily.org"))
 
-  (global-set-key (kbd "<f6>") 'run-c-code)
+   (global-set-key (kbd "C-c t") 'my/open-to-do-daily-org)
 
-  ;; Lisp code execution with F7
-  (global-set-key (kbd "<f7>") 
-                  (lambda () 
-                    (interactive)
-                    (if (string= (file-name-extension (buffer-file-name)) "lisp")
-                        (compile (concat "clisp " (buffer-file-name)))
-                      (message "Not a Lisp file"))))
+   ;; Python code execution with F5
+   (global-set-key (kbd "<f5>") 
+                   (lambda () 
+                     (interactive)
+                     (if (string= (file-name-extension (buffer-file-name)) "py")
+                         (progn
+                           (python-shell-send-buffer)
+                           (python-shell-switch-to-shell))
+                       (message "Not a Python file"))))
 
-  ;; Swap bindings
-  (global-set-key (kbd "C-x C-s") 'isearch-forward)
-  (global-set-key (kbd "C-s") 'save-buffer)
+   ;; C code compilation and execution with F6
+   (defun run-c-code ()
+     "Compile and run C code in a separate buffer with F6"
+     (interactive)
+     (when (buffer-file-name)
+       (if (string= (file-name-extension (buffer-file-name)) "c")
+           (let ((output-file (file-name-sans-extension (buffer-file-name))))
+             ;; Save buffer first
+             (save-buffer)
+             ;; Compile and run in async shell
+             (async-shell-command 
+              (concat "gcc -o " (shell-quote-argument output-file) " " 
+                      (shell-quote-argument (buffer-file-name)) " && " 
+                      (shell-quote-argument output-file))
+              "*C Output*")
+             (switch-to-buffer-other-window "*C Output*"))
+         (message "Not a C file"))))
+
+   (global-set-key (kbd "<f6>") 'run-c-code)
+
+   ;; Lisp code execution with F7
+   (global-set-key (kbd "<f7>") 
+                   (lambda () 
+                     (interactive)
+                     (if (string= (file-name-extension (buffer-file-name)) "lisp")
+                         (compile (concat "clisp " (buffer-file-name)))
+                       (message "Not a Lisp file"))))
+
+   ;; Swap bindings
+   (global-set-key (kbd "C-x C-s") 'isearch-forward)
+   (global-set-key (kbd "C-s") 'save-buffer)
 
 
  #+END_SRC
