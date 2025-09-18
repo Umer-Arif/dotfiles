@@ -280,11 +280,33 @@
     :ensure t)
 
   (use-package markdown-mode
-  :ensure t
-  :mode ("README\\.md\\'" . gfm-mode)
-  :init (setq markdown-command "multimarkdown")
-  :bind (:map markdown-mode-map
-         ("C-c C-e" . markdown-do)))
+    :ensure t
+    :mode ("README\\.md\\'" . gfm-mode)
+    :init (setq markdown-command "multimarkdown")
+    :bind (:map markdown-mode-map
+  			  ("C-c C-e" . markdown-do)))
+
+  ;; Evil core
+  (use-package evil
+    :ensure t 
+    :init
+    ;; Only modal editing + motions, no extra remapping
+   (setq evil-want-C-u-scroll t)    ;; allow C-u to scroll up
+    (setq evil-want-C-i-jump nil)    ;; keep TAB as Emacs TAB
+    (setq evil-want-keybinding nil)  ;; don't override extra bindings
+    :config
+    (evil-mode 1))
+  (with-eval-after-load 'evil
+    (define-key evil-normal-state-map (kbd "C-a") #'mark-whole-buffer)
+  (define-key evil-normal-state-map (kbd "u") #'undo-tree-visualize))
+  ;; Optional: stop Evil from loading everywhere
+  ;; (example: only in programming/text buffers)
+  ;;(dolist (hook '(prog-mode-hook text-mode-hook conf-mode-hook))
+    ;;(add-hook hook #'evil-local-mode))
+  (use-package evil-collection
+    :after evil
+    :ensure t
+    :config (evil-collection-init '(dired vertico)))
 
   (elpaca-process-queues)
 
