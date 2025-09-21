@@ -4,7 +4,6 @@
 #+AUTHOR: Omer Arif
 #+STARTUP: overview
 #+PROPERTY: header-args:emacs-lisp :exports code :results none :tangle ~/.emacs.d/init.el
-
 * initialiazation
 #+BEGIN_SRC emacs-lisp
     ;; This must be the VERY first thing in your configuration
@@ -573,23 +572,24 @@
 
 * Themes
  #+BEGIN_SRC emacs-lisp
-       ;; Remove or comment out the gruvbox package
-     ;; (use-package base16-theme 
-       ;; :ensure (:host github :repo "tinted-theming/base16-emacs")
-       ;; :config 
-        ;;(load-theme 'base16-default-dark t)
-       ;; (set-face-attribute 'mode-line nil :box nil ;;:overline nil :underline nil)
-       ;; (set-face-attribute 'mode-line-inactive nil ;;:box nil :overline nil :underline nil))
+   ;; Remove or comment out the gruvbox package
+   ;; (use-package base16-theme 
+   ;; :ensure (:host github :repo "tinted-theming/base16-emacs")
+   ;; :config 
+   ;;(load-theme 'base16-default-dark t)
+   ;; (set-face-attribute 'mode-line nil :box nil ;;:overline nil :underline nil)
+   ;; (set-face-attribute 'mode-line-inactive nil ;;:box nil :overline nil :underline nil))
    (use-package doom-themes
-     :ensure t
-     :config
-     (setq doom-theme 'doom-molokai)
-     (load-theme 'doom-molokai t))
-       ;; You can remove this line since Elpaca handles theme paths automatically
-       ;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-   ;;(load-theme 'omer-github t)
- #+END_SRC
- 
+   :ensure t
+   :config
+   (setq doom-theme 'doom-bluloco-dark)
+   (load-theme 'doom-bluloco-dark t))
+   ;; You can remove this line since Elpaca handles theme paths automatically
+   ;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+   ;;(load-theme 'jellyfish t) 
+
+#+END_SRC
+
 * Keybinds
 #+BEGIN_SRC emacs-lisp
    ;; Open hyprland directory
