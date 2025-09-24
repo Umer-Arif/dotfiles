@@ -1,14 +1,24 @@
 //start ups
 // >>> Added Xwayland satellite support <<<
-spawn-at-startup "swww-daemon"
+//spawn-at-startup "swww-daemon"
+spawn-at-startup "hyprpaper"
 spawn-at-startup "waybar"
 spawn-at-startup "niriswitcher"
 spawn-at-startup "mako"
 //spawn-at-startup "xwayland-satellite"
+
 environment {
     DISPLAY ":0"
 }
 
+hotkey-overlay {
+    skip-at-startup
+}
+
+overview {
+  zoom 0.5
+  backdrop-color "#00000000"
+}
 
 
 // Input device configuration.
@@ -167,7 +177,7 @@ layout {
         // - CSS-like notation: "rgb(255, 127, 0)", rgba(), hsl() and a few others.
 
         // Color of the ring on the active monitor.
-        //active-color "#28b8dbff"
+        active-color "#F6CB4Aff"
 
         // Color of the ring on inactive monitors.
         inactive-color "#505050"
@@ -179,7 +189,7 @@ layout {
         // You can use any CSS linear-gradient tool on the web to set these up.
         // Changing the color space is also supported, check the wiki for more info.
         //
-         active-gradient from="#1fa5e4ff" to="#d8dba4ff" angle=60
+       // active-gradient from="#1fa5e4ff" to="#d8dba4ff" angle=60
 
         // You can also color the gradient relative to the entire view
         // of the workspace, rather than relative to just the window itself.
@@ -282,7 +292,11 @@ window-rule {
     opacity 1.0
     draw-border-with-background false
 }
-
+window-rule {
+    match app-id="sioyek"
+    opacity 0.9
+    draw-border-with-background false
+}
 
 // Uncomment this line to ask the clients to omit their client-side decorations if possible.
 // If the client will specifically ask for CSD, the request will be honored.

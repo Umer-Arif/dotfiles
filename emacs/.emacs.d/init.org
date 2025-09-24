@@ -41,7 +41,7 @@
 
       (add-hook 'focus-out-hook #'me/garbage-collect-maybe)
     ;; Background
-            (add-to-list 'default-frame-alist '(alpha-background . 0.9))
+            (add-to-list 'default-frame-alist '(alpha-background . 0.7))
 
             (add-to-list 'safe-local-variable-values
                          '(before-save-hook . delete-trailing-whitespace))
@@ -582,8 +582,8 @@
    (use-package doom-themes
    :ensure t
    :config
-   (setq doom-theme 'doom-bluloco-dark)
-   (load-theme 'doom-bluloco-dark t))
+   (setq doom-theme 'doom-gruvbox)
+   (load-theme 'doom-gruvbox t))
    ;; You can remove this line since Elpaca handles theme paths automatically
    ;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
    ;;(load-theme 'jellyfish t) 
