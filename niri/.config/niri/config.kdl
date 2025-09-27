@@ -1,7 +1,7 @@
 //start ups
 // >>> Added Xwayland satellite support <<<
-//spawn-at-startup "swww-daemon"
-spawn-at-startup "hyprpaper"
+spawn-at-startup "swww-daemon"
+//spawn-at-startup "hyprpaper"
 spawn-at-startup "waybar"
 spawn-at-startup "niriswitcher"
 spawn-at-startup "mako"
@@ -15,10 +15,10 @@ hotkey-overlay {
     skip-at-startup
 }
 
-overview {
-  zoom 0.5
-  backdrop-color "#00000000"
-}
+//overview {
+//  zoom 0.5
+//  backdrop-color "#00000000"
+//}
 
 
 // Input device configuration.
@@ -169,7 +169,7 @@ layout {
         // off
 
         // How many logical pixels the ring extends out from the windows.
-        width 4
+        width 2
 
         // Colors can be set in a variety of ways:
         // - CSS named colors: "red"
@@ -177,7 +177,7 @@ layout {
         // - CSS-like notation: "rgb(255, 127, 0)", rgba(), hsl() and a few others.
 
         // Color of the ring on the active monitor.
-        active-color "#F6CB4Aff"
+        active-color "#4B0082ff"
 
         // Color of the ring on inactive monitors.
         inactive-color "#505050"
