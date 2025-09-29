@@ -1,15 +1,24 @@
 //start ups
-// >>> Added Xwayland satellite support <<<
 spawn-at-startup "swww-daemon"
 spawn-at-startup "waybar"
 spawn-at-startup "niriswitcher"
 spawn-at-startup "mako"
-//spawn-at-startup "xwayland-satellite"
-environment {
-    DISPLAY ":0"
+
+hotkey-overlay {
+    skip-at-startup
 }
 
+layer-rule {
+    match namespace="^swww-daemon$"
+    place-within-backdrop true
+}
 
+// Optionally, disable the workspace shadows in the overview.
+overview {
+    workspace-shadow {
+        off
+    }
+}
 
 // Input device configuration.
 // Find the full list of options on the wiki:
@@ -113,7 +122,7 @@ input {
 layout {
     // Set gaps around windows in logical pixels.
     gaps 10
-
+	background-color "#00000000"
     // When to center a column when changing focus, options are:
     // - "never", default behavior, focusing an off-screen column will keep at the left
     //   or right edge of the screen.

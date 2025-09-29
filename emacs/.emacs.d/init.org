@@ -41,7 +41,7 @@
 
       (add-hook 'focus-out-hook #'me/garbage-collect-maybe)
     ;; Background
-            (add-to-list 'default-frame-alist '(alpha-background . 0.9))
+            (add-to-list 'default-frame-alist '(alpha-background . 1.0))
 
             (add-to-list 'safe-local-variable-values
                          '(before-save-hook . delete-trailing-whitespace))
@@ -229,9 +229,7 @@
     (undo-tree-auto-save-history t)
     (undo-tree-history-directory-alist '((".*" . "/home/omer/.emacs.d/undo")))
     :config
-    (global-undo-tree-mode)
-    ;; Add C-x u keybinding for undo-tree-visualize
-    :bind ("C-x u" . undo-tree-visualize))
+    (global-undo-tree-mode))
 
   (use-package ligature
     :ensure t
@@ -266,9 +264,6 @@
   (use-package transient
     :ensure t)
 
-  (use-package magit
-    :ensure t)
-
   (use-package ox-pandoc
     :ensure t     ;; Elpaca will fetch it
     :after org
@@ -298,6 +293,7 @@
   (with-eval-after-load 'evil
     (define-key evil-normal-state-map (kbd "C-a") #'mark-whole-buffer)
   (define-key evil-normal-state-map (kbd "u") #'undo-tree-visualize))
+
   ;; Optional: stop Evil from loading everywhere
   ;; (example: only in programming/text buffers)
   ;;(dolist (hook '(prog-mode-hook text-mode-hook conf-mode-hook))
@@ -388,7 +384,6 @@
 ;;     (setq mode-line-format (list "%_"))))
  #+END_SRC
 
-** indent-line
 * Org-mode
 
  #+BEGIN_SRC emacs-lisp
@@ -579,26 +574,27 @@
    ;;(load-theme 'base16-default-dark t)
    ;; (set-face-attribute 'mode-line nil :box nil ;;:overline nil :underline nil)
    ;; (set-face-attribute 'mode-line-inactive nil ;;:box nil :overline nil :underline nil))
-   (use-package doom-themes
-   :ensure t
-   :config
-   (setq doom-theme 'doom-bluloco-dark)
-   (load-theme 'doom-bluloco-dark t))
+   ;;(use-package doom-themes
+   ;;:ensure t
+   ;;:config
+   ;;(setq doom-theme 'doom-moonlight)
+   ;;(load-theme 'doom-moonlight t))
+
    ;; You can remove this line since Elpaca handles theme paths automatically
-   ;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-   ;;(load-theme 'jellyfish t) 
+   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+   (load-theme 'jellyfish t) 
 
 #+END_SRC
 
 * Keybinds
 #+BEGIN_SRC emacs-lisp
-   ;; Open hyprland directory
-   ;;(defun my/open-hypr-directory ()
-     ;;"Open the ~/.config/hypr directory in dired."
-     ;;(interactive)
-     ;;(dired "~/dotfiles/.config/hypr"))
+    ;;Open hyprland directory
+   (defun my/open-hypr-directory ()
+     "Open the ~/.config/hypr directory in dired."
+     (interactive)
+     (dired "~/dotfiles/.config/hypr"))
 
-  ;; (global-set-key (kbd "C-c h") 'my/open-hypr-directory)
+  (global-set-key (kbd "C-c h") 'my/open-hypr-directory)
 
     ;; Open Niri config
    (defun my/open-niri-config ()
@@ -634,13 +630,13 @@
 
    (global-set-key (kbd "C-c C-o") 'my/open-org-directory)
 
-
-   (defun my/open-to-do-daily-org ()
-     "Open the to-do-daily.org directory in dired."
+   ;;Open dotfiles directory
+   (defun my/open-dotfiles ()
+     "Open the ~/dotfiles directory in dired."
      (interactive)
-     (find-file "~/Documents/org/Important/to-do-daily.org"))
+     (dired "~/dotfiles"))
 
-   (global-set-key (kbd "C-c t") 'my/open-to-do-daily-org)
+  (global-set-key (kbd "C-c d") 'my/open-dotfiles)
 
    ;; Python code execution with F5
    (global-set-key (kbd "<f5>") 
