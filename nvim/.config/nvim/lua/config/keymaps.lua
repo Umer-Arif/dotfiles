@@ -25,14 +25,18 @@ vim.keymap.set("n", "<F5>", function()
     runner.run("python3 %s")
 end, { noremap = true, silent = true, desc = "Run Python code" })
 
+
 vim.keymap.set("n", "<F6>", function()
-    runner.run("gcc %s -o out && ./out")
-end, { noremap = true, silent = true, desc = "Compile & run C code" })
+    runner.run("g++ %s -o out && ./out")
+end, { noremap = true, silent = true, desc = "Compile & run C++ code" })
+
 
 vim.keymap.set("n", "<F7>", function()
     runner.run("lua %s")
 end, { noremap = true, silent = true, desc = "Run Lua code" })
 
+vim.keymap.set("n", "<F8>", function() runner.run("gcc %s -o out && ./out") end,
+    { noremap = true, silent = true, desc = "Compile & run C code" })
 -- ==========================================================================================
 -- 📂 Buffer Navigation
 -- ==========================================================================================
