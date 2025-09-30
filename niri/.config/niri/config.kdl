@@ -168,7 +168,7 @@ layout {
         // off
 
         // How many logical pixels the ring extends out from the windows.
-        width 4
+        width 2
 
         // Colors can be set in a variety of ways:
         // - CSS named colors: "red"
@@ -176,7 +176,7 @@ layout {
         // - CSS-like notation: "rgb(255, 127, 0)", rgba(), hsl() and a few others.
 
         // Color of the ring on the active monitor.
-        //active-color "#28b8dbff"
+        active-color "#4B0082ff"
 
         // Color of the ring on inactive monitors.
         inactive-color "#505050"
@@ -188,7 +188,7 @@ layout {
         // You can use any CSS linear-gradient tool on the web to set these up.
         // Changing the color space is also supported, check the wiki for more info.
         //
-         active-gradient from="#1fa5e4ff" to="#d8dba4ff" angle=60
+        // active-gradient from="#1fa5e4ff" to="#d8dba4ff" angle=60
 
         // You can also color the gradient relative to the entire view
         // of the workspace, rather than relative to just the window itself.
@@ -277,18 +277,13 @@ window-rule {
     draw-border-with-background false
 }
 window-rule {
-    match app-id="zathura"
+    match app-id="sioyek"
     opacity 0.9
     draw-border-with-background false
 }
 window-rule {
     match app-id="niriswitcher"
     opacity 0.7
-    draw-border-with-background false
-}
-window-rule {
-    match app-id="swayimg"
-    opacity 1.0
     draw-border-with-background false
 }
 
