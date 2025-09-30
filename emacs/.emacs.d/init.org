@@ -163,147 +163,154 @@
 
 * Packages
 #+BEGIN_SRC emacs-lisp
-  (put 'dired-find-alternate-file 'disabled nil)
+    (put 'dired-find-alternate-file 'disabled nil)
 
-  ;;Parhenthesis
-  (use-package smartparens
+    ;;Parhenthesis
+    (use-package smartparens
+      :ensure t
+      :hook ((prog-mode text-mode markdown-mode org-mode) . smartparens-mode)
+      :config
+      (require 'smartparens-config)
+      (show-smartparens-global-mode 1))
+
+    (use-package vertico
+      :ensure t
+      :init
+      (vertico-mode)
+      :config
+      (setq vertico-cycle t)
+      ;; Add these lines for alphabetical sorting:
+      (setq read-file-name-completion-ignore-case t
+            read-buffer-completion-ignore-case t
+            completion-ignore-case t))
+
+
+    (use-package corfu
+      :ensure t
+      :custom
+      (corfu-auto t)              ; Enable auto-completion
+      (corfu-auto-prefix 1)       ; Trigger after 2 chars
+      (corfu-auto-delay 0.1)      ; Faster popup
+      :init
+      (global-corfu-mode)
+      (corfu-popupinfo-mode))  ;;Show documentation
+
+    (use-package cape
+      :ensure t
+      :init
+      ;; Add dabbrev to default CAPFs
+      (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+
+      ;; Ensure dabbrev works in Org mode as well
+      (add-hook 'org-mode-hook
+                (lambda ()
+                  (add-to-list 'completion-at-point-functions #'cape-dabbrev))))  ;; buffer words
+
+
+    (use-package orderless
+      :ensure t ; Let Elpaca handle the installation from its default sources (Melpa)
+      :custom
+      (completion-styles '(orderless basic))) ; Set the completion style
+
+    (use-package marginalia
+      :ensure t
+      :init ; This runs after the package is loaded
+      (marginalia-mode))
+
+    (use-package which-key
+      :ensure t
+      :config
+      (setq which-key-idle-delay 0.3)
+      (which-key-mode))
+
+    (use-package undo-tree
+      :ensure t
+      :custom
+      (undo-tree-auto-save-history t)
+      (undo-tree-history-directory-alist '((".*" . "/home/omer/.emacs.d/undo")))
+      :config
+      (global-undo-tree-mode))
+
+    (use-package ligature
+      :ensure t
+      :config
+      (ligature-set-ligatures 't '("www"))
+      (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+      (ligature-set-ligatures 'prog-mode '("-<<" "-<" "-<-" "<--" "<---" "<<-" "<-" "->" "->>" "-->" "--->" "->-" ">-" ">>-"
+                                           "=<<" "=<" "=<=" "<==" "<===" "<<=" "<=" "=>" "=>>" "==>" "===>" "=>=" ">=" ">>="
+                                           "<->" "<-->" "<--->" "<---->" "<=>" "<==>" "<===>" "<====>" "::" ":::" "__"
+                                           "<~~" "</" "</>" "/>" "~~>" "==" "!=" "/=" "~=" "<>" "===" "!==" "!===" "=/=" "=!="
+                                           "<:" ":=" "*=" "*+" "<*" "<*>" "*>" "<|" "<|>" "|>" "<." "<.>" ".>" "+*" "=*" "=:"
+                                           ":>" "(*" "*)" "/*" "*/" "[|" "|]" "{|" "|}" "++" "+++" "\\/" "/\\" "|-" "-|" "<!--" "<!---"))
+      (global-ligature-mode))
+
+    (use-package all-the-icons
+      :if (display-graphic-p)
+      :ensure t)
+
+    (use-package all-the-icons-dired
+      :ensure t
+      :hook (dired-mode . all-the-icons-dired-mode))
+
+    (use-package all-the-icons-completion
+      :ensure t
+      :after (marginalia all-the-icons)
+      :init
+      ;; Comment out or remove this line to disable icons
+      ;;(all-the-icons-completion-mode)
+      )
+
+
+    (use-package transient
+      :ensure t)
+
+    (use-package ox-pandoc
+      :ensure t     ;; Elpaca will fetch it
+      :after org
+      :config
+      (require 'ox-pandoc))
+
+    (use-package vterm
+      :ensure t)
+
+    (use-package markdown-mode
+      :ensure t
+      :mode ("README\\.md\\'" . gfm-mode)
+      :init (setq markdown-command "multimarkdown")
+      :bind (:map markdown-mode-map
+    			  ("C-c C-e" . markdown-do)))
+
+    ;; Evil core
+    (use-package evil
+      :ensure t 
+      :init
+      ;; Only modal editing + motions, no extra remapping
+     (setq evil-want-C-u-scroll t)    ;; allow C-u to scroll up
+      (setq evil-want-C-i-jump nil)    ;; keep TAB as Emacs TAB
+      (setq evil-want-keybinding nil)  ;; don't override extra bindings
+      :config
+      (evil-mode 1))
+    (with-eval-after-load 'evil
+      (define-key evil-normal-state-map (kbd "C-a") #'mark-whole-buffer)
+    (define-key evil-normal-state-map (kbd "u") #'undo-tree-visualize))
+
+    ;; Optional: stop Evil from loading everywhere
+    ;; (example: only in programming/text buffers)
+    ;;(dolist (hook '(prog-mode-hook text-mode-hook conf-mode-hook))
+      ;;(add-hook hook #'evil-local-mode))
+    (use-package evil-collection
+      :after evil
+      :ensure t
+      :config (evil-collection-init '(dired vertico)))
+
+
+  (use-package yasnippet
     :ensure t
-    :hook ((prog-mode text-mode markdown-mode org-mode) . smartparens-mode)
     :config
-    (require 'smartparens-config)
-    (show-smartparens-global-mode 1))
+    (yas-global-mode 1))
 
-  (use-package vertico
-    :ensure t
-    :init
-    (vertico-mode)
-    :config
-    (setq vertico-cycle t)
-    ;; Add these lines for alphabetical sorting:
-    (setq read-file-name-completion-ignore-case t
-          read-buffer-completion-ignore-case t
-          completion-ignore-case t))
-
-
-  (use-package corfu
-    :ensure t
-    :custom
-    (corfu-auto t)              ; Enable auto-completion
-    (corfu-auto-prefix 1)       ; Trigger after 2 chars
-    (corfu-auto-delay 0.1)      ; Faster popup
-    :init
-    (global-corfu-mode)
-    (corfu-popupinfo-mode))  ;;Show documentation
-
-  (use-package cape
-    :ensure t
-    :init
-    ;; Add dabbrev to default CAPFs
-    (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-
-    ;; Ensure dabbrev works in Org mode as well
-    (add-hook 'org-mode-hook
-              (lambda ()
-                (add-to-list 'completion-at-point-functions #'cape-dabbrev))))  ;; buffer words
-
-
-  (use-package orderless
-    :ensure t ; Let Elpaca handle the installation from its default sources (Melpa)
-    :custom
-    (completion-styles '(orderless basic))) ; Set the completion style
-
-  (use-package marginalia
-    :ensure t
-    :init ; This runs after the package is loaded
-    (marginalia-mode))
-
-  (use-package which-key
-    :ensure t
-    :config
-    (setq which-key-idle-delay 0.3)
-    (which-key-mode))
-
-  (use-package undo-tree
-    :ensure t
-    :custom
-    (undo-tree-auto-save-history t)
-    (undo-tree-history-directory-alist '((".*" . "/home/omer/.emacs.d/undo")))
-    :config
-    (global-undo-tree-mode))
-
-  (use-package ligature
-    :ensure t
-    :config
-    (ligature-set-ligatures 't '("www"))
-    (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
-    (ligature-set-ligatures 'prog-mode '("-<<" "-<" "-<-" "<--" "<---" "<<-" "<-" "->" "->>" "-->" "--->" "->-" ">-" ">>-"
-                                         "=<<" "=<" "=<=" "<==" "<===" "<<=" "<=" "=>" "=>>" "==>" "===>" "=>=" ">=" ">>="
-                                         "<->" "<-->" "<--->" "<---->" "<=>" "<==>" "<===>" "<====>" "::" ":::" "__"
-                                         "<~~" "</" "</>" "/>" "~~>" "==" "!=" "/=" "~=" "<>" "===" "!==" "!===" "=/=" "=!="
-                                         "<:" ":=" "*=" "*+" "<*" "<*>" "*>" "<|" "<|>" "|>" "<." "<.>" ".>" "+*" "=*" "=:"
-                                         ":>" "(*" "*)" "/*" "*/" "[|" "|]" "{|" "|}" "++" "+++" "\\/" "/\\" "|-" "-|" "<!--" "<!---"))
-    (global-ligature-mode))
-
-  (use-package all-the-icons
-    :if (display-graphic-p)
-    :ensure t)
-
-  (use-package all-the-icons-dired
-    :ensure t
-    :hook (dired-mode . all-the-icons-dired-mode))
-
-  (use-package all-the-icons-completion
-    :ensure t
-    :after (marginalia all-the-icons)
-    :init
-    ;; Comment out or remove this line to disable icons
-    ;;(all-the-icons-completion-mode)
-    )
-
-
-  (use-package transient
-    :ensure t)
-
-  (use-package ox-pandoc
-    :ensure t     ;; Elpaca will fetch it
-    :after org
-    :config
-    (require 'ox-pandoc))
-
-  (use-package vterm
-    :ensure t)
-
-  (use-package markdown-mode
-    :ensure t
-    :mode ("README\\.md\\'" . gfm-mode)
-    :init (setq markdown-command "multimarkdown")
-    :bind (:map markdown-mode-map
-  			  ("C-c C-e" . markdown-do)))
-
-  ;; Evil core
-  (use-package evil
-    :ensure t 
-    :init
-    ;; Only modal editing + motions, no extra remapping
-   (setq evil-want-C-u-scroll t)    ;; allow C-u to scroll up
-    (setq evil-want-C-i-jump nil)    ;; keep TAB as Emacs TAB
-    (setq evil-want-keybinding nil)  ;; don't override extra bindings
-    :config
-    (evil-mode 1))
-  (with-eval-after-load 'evil
-    (define-key evil-normal-state-map (kbd "C-a") #'mark-whole-buffer)
-  (define-key evil-normal-state-map (kbd "u") #'undo-tree-visualize))
-
-  ;; Optional: stop Evil from loading everywhere
-  ;; (example: only in programming/text buffers)
-  ;;(dolist (hook '(prog-mode-hook text-mode-hook conf-mode-hook))
-    ;;(add-hook hook #'evil-local-mode))
-  (use-package evil-collection
-    :after evil
-    :ensure t
-    :config (evil-collection-init '(dired vertico)))
-
-  (elpaca-process-queues)
+    
+    (elpaca-process-queues)
 
 
  #+END_SRC
@@ -545,6 +552,7 @@
    (add-hook 'html-mode-hook 'eglot-ensure)
    (add-hook 'css-mode-hook 'eglot-ensure)
    (add-hook 'js-mode-hook 'eglot-ensure)
+   (add-hook 'c++-mode-hook 'eglot-ensure)
    (add-to-list 'eglot-server-programs '(python-mode . ("jedi-language-server")))
    (add-to-list 'eglot-server-programs '((c-mode c++-mode) . ("clangd")))
    (add-to-list 'eglot-server-programs '(html-mode . ("vscode-html-language-server" "--stdio")))
@@ -649,24 +657,26 @@
                        (message "Not a Python file"))))
 
    ;; C code compilation and execution with F6
-   (defun run-c-code ()
-     "Compile and run C code in a separate buffer with F6"
-     (interactive)
-     (when (buffer-file-name)
-       (if (string= (file-name-extension (buffer-file-name)) "c")
-           (let ((output-file (file-name-sans-extension (buffer-file-name))))
-             ;; Save buffer first
-             (save-buffer)
-             ;; Compile and run in async shell
-             (async-shell-command 
-              (concat "gcc -o " (shell-quote-argument output-file) " " 
-                      (shell-quote-argument (buffer-file-name)) " && " 
-                      (shell-quote-argument output-file))
-              "*C Output*")
-             (switch-to-buffer-other-window "*C Output*"))
-         (message "Not a C file"))))
+   ;; C++ code compilation and execution with F7
+(defun run-cpp-code ()
+  "Compile and run C++ code in a separate buffer with F6"
+  (interactive)
+  (when (buffer-file-name)
+    (if (string= (file-name-extension (buffer-file-name)) "cpp")
+        (let ((output-file (file-name-sans-extension (buffer-file-name))))
+          ;; Save buffer first
+          (save-buffer)
+          ;; Compile and run in async shell
+          (async-shell-command 
+           (concat "g++ -o " (shell-quote-argument output-file) " " 
+                   (shell-quote-argument (buffer-file-name)) " && " 
+                   (shell-quote-argument output-file))
+           "*C++ Output*")
+          (switch-to-buffer-other-window "*C++ Output*"))
+      (message "Not a C++ file"))))
 
-   (global-set-key (kbd "<f6>") 'run-c-code)
+(global-set-key (kbd "<f6>") 'run-cpp-code)
+
 
    ;; Lisp code execution with F7
    (global-set-key (kbd "<f7>") 
