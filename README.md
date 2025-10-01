@@ -4,7 +4,11 @@ My personal dotfiles managed with  [GNU Stow](https://www.gnu.org/software/stow/
 Install it with your package manager:
 
 ``` shell
+#Arch
 sudo pacman -S stow
+
+#Fedora
+sudo dnf install stow
 ```
 
 ## 🔧 Setup
@@ -39,7 +43,7 @@ This will create symlinks in `~/.config/...` pointing to the files here.
 
 Each directory here corresponds to one program. For example:
 
-`kitty/` → `~/.config/niri/`
+`niri/` → `~/.config/niri/`
 
 `mpv/` → `~/.config/mpv/`
 
