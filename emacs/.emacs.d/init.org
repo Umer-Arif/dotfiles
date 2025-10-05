@@ -41,7 +41,7 @@
 
       (add-hook 'focus-out-hook #'me/garbage-collect-maybe)
     ;; Background
-            (add-to-list 'default-frame-alist '(alpha-background . 1.0))
+            (add-to-list 'default-frame-alist '(alpha-background . 0.7))
 
             (add-to-list 'safe-local-variable-values
                          '(before-save-hook . delete-trailing-whitespace))
@@ -575,120 +575,141 @@
 
 * Themes
  #+BEGIN_SRC emacs-lisp
-   ;; Remove or comment out the gruvbox package
-   ;; (use-package base16-theme 
-   ;; :ensure (:host github :repo "tinted-theming/base16-emacs")
-   ;; :config 
-   ;;(load-theme 'base16-default-dark t)
-   ;; (set-face-attribute 'mode-line nil :box nil ;;:overline nil :underline nil)
-   ;; (set-face-attribute 'mode-line-inactive nil ;;:box nil :overline nil :underline nil))
-   ;;(use-package doom-themes
-   ;;:ensure t
+     ;; Remove or comment out the gruvbox package
+   ;;(use-package Brin theme
+     ;; :ensure (:host github :repo "owainlewis/emacs-color-themes")
+      ;;:ensure t
    ;;:config
-   ;;(setq doom-theme 'doom-moonlight)
-   ;;(load-theme 'doom-moonlight t))
+   ;;(load-theme 'brin t))  ;; (set-face-attribute 'mode-line nil :box nil ;;:overline nil :underline nil)
+     ;; (set-face-attribute 'mode-line-inactive nil ;;:box nil :overline nil :underline nil))
+     ;;(use-package doom-themes
+     ;;:ensure t
+     ;;:config
+     ;;(setq doom-theme 'doom-moonlight)
+     ;;(load-theme 'doom-moonlight t))
 
-   ;; You can remove this line since Elpaca handles theme paths automatically
-   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-   (load-theme 'jellyfish t) 
+     ;; You can remove this line since Elpaca handles theme paths automatically
+     (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+     (load-theme 'omer-blackboard t) 
 
 #+END_SRC
 
 * Keybinds
+** Direcotry navigation
 #+BEGIN_SRC emacs-lisp
-    ;;Open hyprland directory
-   (defun my/open-hypr-directory ()
-     "Open the ~/.config/hypr directory in dired."
-     (interactive)
-     (dired "~/dotfiles/.config/hypr"))
+      ;;Open hyprland directory
+     (defun my/open-hypr-directory ()
+       "Open the ~/.config/hypr directory in dired."
+       (interactive)
+       (dired "~/dotfiles/hypr/.config/hypr"))
 
-  (global-set-key (kbd "C-c h") 'my/open-hypr-directory)
+    (global-set-key (kbd "C-c h") 'my/open-hypr-directory)
 
-    ;; Open Niri config
-   (defun my/open-niri-config ()
-     "Open the config.kdl"
-     (interactive)
-     (find-file "~/dotfiles/niri/.config/niri/config.kdl"))
+      ;; Open Niri config
+     (defun my/open-niri-config ()
+       "Open the config.kdl"
+       (interactive)
+       (find-file "~/dotfiles/niri/.config/niri/config.kdl"))
 
-   (global-set-key (kbd "C-c n") 'my/open-niri-config)
-
-
-   ;; Style.css for waybar
-   (defun my/open-waybar-style ()
-     "Open the Waybar style.css file."
-     (interactive)
-     (find-file "~/dotfiles/waybar/.config/waybar/style.css"))
-
-   (global-set-key (kbd "C-c w") 'my/open-waybar-style)
-
-   ;; For init.org
-   (defun my/open-init-org ()
-     "Open the init.org file."
-     (interactive)
-     (find-file "~/dotfiles/emacs/.emacs.d/init.org"))
-
-   (global-set-key (kbd "C-c i") 'my/open-init-org)
+     (global-set-key (kbd "C-c n") 'my/open-niri-config)
 
 
-   ;; Open ~/Documents/org directory
-   (defun my/open-org-directory ()
-     "Open the ~/Documents/org directory in dired."
-     (interactive)
-     (dired "~/Documents/org"))
+     ;; Style.css for waybar
+     (defun my/open-waybar-style ()
+       "Open the Waybar style.css file."
+       (interactive)
+       (find-file "~/dotfiles/waybar/.config/waybar/style.css"))
 
-   (global-set-key (kbd "C-c C-o") 'my/open-org-directory)
+     (global-set-key (kbd "C-c w") 'my/open-waybar-style)
 
-   ;;Open dotfiles directory
-   (defun my/open-dotfiles ()
-     "Open the ~/dotfiles directory in dired."
-     (interactive)
-     (dired "~/dotfiles"))
+     ;; For init.org
+     (defun my/open-init-org ()
+       "Open the init.org file."
+       (interactive)
+       (find-file "~/dotfiles/emacs/.emacs.d/init.org"))
 
-  (global-set-key (kbd "C-c d") 'my/open-dotfiles)
-
-   ;; Python code execution with F5
-   (global-set-key (kbd "<f5>") 
-                   (lambda () 
-                     (interactive)
-                     (if (string= (file-name-extension (buffer-file-name)) "py")
-                         (progn
-                           (python-shell-send-buffer)
-                           (python-shell-switch-to-shell))
-                       (message "Not a Python file"))))
-
-   ;; C code compilation and execution with F6
-   ;; C++ code compilation and execution with F7
-(defun run-cpp-code ()
-  "Compile and run C++ code in a separate buffer with F6"
-  (interactive)
-  (when (buffer-file-name)
-    (if (string= (file-name-extension (buffer-file-name)) "cpp")
-        (let ((output-file (file-name-sans-extension (buffer-file-name))))
-          ;; Save buffer first
-          (save-buffer)
-          ;; Compile and run in async shell
-          (async-shell-command 
-           (concat "g++ -o " (shell-quote-argument output-file) " " 
-                   (shell-quote-argument (buffer-file-name)) " && " 
-                   (shell-quote-argument output-file))
-           "*C++ Output*")
-          (switch-to-buffer-other-window "*C++ Output*"))
-      (message "Not a C++ file"))))
-
-(global-set-key (kbd "<f6>") 'run-cpp-code)
+     (global-set-key (kbd "C-c i") 'my/open-init-org)
 
 
-   ;; Lisp code execution with F7
-   (global-set-key (kbd "<f7>") 
-                   (lambda () 
-                     (interactive)
-                     (if (string= (file-name-extension (buffer-file-name)) "lisp")
-                         (compile (concat "clisp " (buffer-file-name)))
-                       (message "Not a Lisp file"))))
+     ;; Open ~/Documents/org directory
+     (defun my/open-org-directory ()
+       "Open the ~/Documents/org directory in dired."
+       (interactive)
+       (dired "~/Documents/org"))
 
-   ;; Swap bindings
-   (global-set-key (kbd "C-x C-s") 'isearch-forward)
-   (global-set-key (kbd "C-s") 'save-buffer)
+     (global-set-key (kbd "C-c C-o") 'my/open-org-directory)
+
+     ;;Open dotfiles directory
+     (defun my/open-dotfiles ()
+       "Open the ~/dotfiles directory in dired."
+       (interactive)
+       (dired "~/dotfiles"))
+
+    (global-set-key (kbd "C-c d") 'my/open-dotfiles)
+
+  ;;Open c++ directory
+     (defun my/open-cpp-directory ()
+       "Open the ~/Documents/cpp directory in dired."
+       (interactive)
+       (dired "~/Documents/cpp"))
+
+  (global-set-key (kbd "C-c C-c") 'my/open-cpp-directory)
+#+END_SRC
+
+** Code Execution
+#+BEGIN_SRC emacs-lisp
+           ;; Python code execution with F5
+     (global-set-key (kbd "<f5>") 
+                     (lambda () 
+                       (interactive)
+                       (if (string= (file-name-extension (buffer-file-name)) "py")
+                           (progn
+                             (python-shell-send-buffer)
+                             (python-shell-switch-to-shell))
+                         (message "Not a Python file"))))
+
+     ;; C code compilation and execution with F6
+     ;; C++ code compilation and execution with F7
+  (defun run-cpp-code ()
+    "Compile and run C++ code in a separate buffer with F6"
+    (interactive)
+    (when (buffer-file-name)
+      (if (string= (file-name-extension (buffer-file-name)) "cpp")
+          (let ((output-file (file-name-sans-extension (buffer-file-name))))
+            ;; Save buffer first
+            (save-buffer)
+            ;; Compile and run in async shell
+            (async-shell-command 
+             (concat "g++ -o " (shell-quote-argument output-file) " " 
+                     (shell-quote-argument (buffer-file-name)) " && " 
+                     (shell-quote-argument output-file))
+             "*C++ Output*")
+            (switch-to-buffer-other-window "*C++ Output*"))
+        (message "Not a C++ file"))))
+
+  (global-set-key (kbd "<f6>") 'run-cpp-code)
+
+
+     ;; Lisp code execution with F7
+     (global-set-key (kbd "<f7>") 
+                     (lambda () 
+                       (interactive)
+                       (if (string= (file-name-extension (buffer-file-name)) "lisp")
+                           (compile (concat "clisp " (buffer-file-name)))
+                         (message "Not a Lisp file"))))
+
+     ;; Swap bindings
+     (global-set-key (kbd "C-x C-s") 'isearch-forward)
+     (global-set-key (kbd "C-s") 'save-buffer)
+
+#+END_SRC
+
+** Buffer navigation
+
+#+BEGIN_SRC emacs-lisp
+  ;; Define evil keybindings
+(define-key evil-normal-state-map (kbd "M-n") 'next-buffer)
+(define-key evil-normal-state-map (kbd "M-p") 'previous-buffer)
 
 
  #+END_SRC
