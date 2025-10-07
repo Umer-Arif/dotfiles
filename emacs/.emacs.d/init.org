@@ -651,7 +651,7 @@
      (defun my/open-cpp-directory ()
        "Open the ~/Documents/cpp directory in dired."
        (interactive)
-       (dired "~/Documents/cpp"))
+       (dired "~/Documents/cpp-projects"))
 
   (global-set-key (kbd "C-c C-c") 'my/open-cpp-directory)
 #+END_SRC
@@ -668,7 +668,6 @@
                              (python-shell-switch-to-shell))
                          (message "Not a Python file"))))
 
-     ;; C code compilation and execution with F6
      ;; C++ code compilation and execution with F7
   (defun run-cpp-code ()
     "Compile and run C++ code in a separate buffer with F6"
@@ -689,6 +688,23 @@
 
   (global-set-key (kbd "<f6>") 'run-cpp-code)
 
+(defun run-qt-cpp-code ()
+  "Compile and run Qt C++ code (Qt6) in a separate buffer with Shift+F6"
+  (interactive)
+  (when (buffer-file-name)
+    (if (string= (file-name-extension (buffer-file-name)) "cpp")
+        (let ((output-file (file-name-sans-extension (buffer-file-name))))
+          (save-buffer)
+          (async-shell-command
+           (concat "g++ -o " (shell-quote-argument output-file) " "
+                   (shell-quote-argument (buffer-file-name))
+                   " $(pkg-config --cflags --libs Qt6Widgets) && "
+                   (shell-quote-argument output-file))
+           "*Qt Output*")
+          (switch-to-buffer-other-window "*Qt Output*"))
+      (message "Not a C++ file"))))
+
+(global-set-key (kbd "S-<f6>") 'run-qt-cpp-code)
 
      ;; Lisp code execution with F7
      (global-set-key (kbd "<f7>") 
