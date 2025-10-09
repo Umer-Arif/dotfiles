@@ -109,3 +109,4 @@ alias ic="cd ~/Downloads/Icons-theme"
 alias th="cd ~/Downloads/GTK-theme"
 alias h="hyprpicker -a -f rgb"
 alias push-emacs='~/push-emacs.sh'
+export PATH=$PATH:/usr/lib/qt6
