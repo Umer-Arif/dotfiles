@@ -531,21 +531,30 @@
 
 * Programming
  #+BEGIN_SRC emacs-lisp
-     (setq js-indent-level 4)
+   (setq js-indent-level 4)
 
-     (use-package typescript-mode
-       :ensure t
-       :config
-       (setq typescript-indent-level 4))
+   (use-package typescript-mode
+     :ensure t
+     :config
+     (setq typescript-indent-level 4))
 
-     (use-package tide
-       :ensure t
-       :config
-       (setq typescript-indent-level 4))
+   (use-package tide
+     :ensure t
+     :config
+     (setq typescript-indent-level 4))
 
-     (use-package rainbow-delimiters
-       :ensure t
-       :hook (prog-mode . rainbow-delimiters-mode))
+   (use-package rust-mode
+     :ensure t
+     :hook
+     (rust-mode . (lambda ()
+   				 (setq indent-tabs-mode nil)))
+     :config
+     (setq rust-format-on-save t))
+
+
+   (use-package rainbow-delimiters
+     :ensure t
+     :hook (prog-mode . rainbow-delimiters-mode))
 
    (require 'eglot)
    (add-hook 'python-mode-hook 'eglot-ensure)
@@ -553,13 +562,14 @@
    (add-hook 'css-mode-hook 'eglot-ensure)
    (add-hook 'js-mode-hook 'eglot-ensure)
    (add-hook 'c++-mode-hook 'eglot-ensure)
+   (add-hook 'rust-mode-hook 'eglot-ensure)
    (add-to-list 'eglot-server-programs '(python-mode . ("jedi-language-server")))
    (add-to-list 'eglot-server-programs '((c-mode c++-mode) . ("clangd")))
    (add-to-list 'eglot-server-programs '(html-mode . ("vscode-html-language-server" "--stdio")))
    (add-to-list 'eglot-server-programs '(css-mode . ("vscode-css-language-server" "--stdio")))
    (add-to-list 'eglot-server-programs '(js-mode . ("typescript-language-server" "--stdio")))
+   (add-to-list 'eglot-server-programs '(rust-mode . ("rust-analyzer")))
    (setq eglot-send-changes-idle-time 0.5)
-   ;; Fix x0x0 (if present)
    (defvar x0x0 nil "Temporary fix for undefined x0x0 variable")
 
  #+END_SRC
@@ -658,17 +668,17 @@
 
 ** Code Execution
 #+BEGIN_SRC emacs-lisp
-           ;; Python code execution with F5
-     (global-set-key (kbd "<f5>") 
-                     (lambda () 
-                       (interactive)
-                       (if (string= (file-name-extension (buffer-file-name)) "py")
-                           (progn
-                             (python-shell-send-buffer)
-                             (python-shell-switch-to-shell))
-                         (message "Not a Python file"))))
+  ;; Python code execution with F5
+  (global-set-key (kbd "<f5>") 
+                  (lambda () 
+                    (interactive)
+                    (if (string= (file-name-extension (buffer-file-name)) "py")
+                        (progn
+                          (python-shell-send-buffer)
+                          (python-shell-switch-to-shell))
+                      (message "Not a Python file"))))
 
-     ;; C++ code compilation and execution with F7
+  ;; C++ code compilation and execution with F6
   (defun run-cpp-code ()
     "Compile and run C++ code in a separate buffer with F6"
     (interactive)
@@ -688,35 +698,43 @@
 
   (global-set-key (kbd "<f6>") 'run-cpp-code)
 
-(defun run-qt-cpp-code ()
-  "Compile and run Qt C++ code (Qt6) in a separate buffer with Shift+F6"
-  (interactive)
-  (when (buffer-file-name)
-    (if (string= (file-name-extension (buffer-file-name)) "cpp")
-        (let ((output-file (file-name-sans-extension (buffer-file-name))))
-          (save-buffer)
-          (async-shell-command
-           (concat "g++ -o " (shell-quote-argument output-file) " "
-                   (shell-quote-argument (buffer-file-name))
-                   " $(pkg-config --cflags --libs Qt6Widgets) && "
-                   (shell-quote-argument output-file))
-           "*Qt Output*")
-          (switch-to-buffer-other-window "*Qt Output*"))
-      (message "Not a C++ file"))))
+  (defun omer/qt-build-and-run ()
+    "Build and run current Qt project using CMake."
+    (interactive)
+    (let ((default-directory "~/Documents/cpp-projects/qt-window/"))
+      (shell-command "cmake -B build && cmake --build build && ./build/QtWindow")))
+  (global-set-key (kbd "S-<f6>") 'omer/qt-build-and-run)
 
-(global-set-key (kbd "S-<f6>") 'run-qt-cpp-code)
+  ;; Lisp code execution with F7
+  (global-set-key (kbd "<f7>") 
+                  (lambda () 
+                    (interactive)
+                    (if (string= (file-name-extension (buffer-file-name)) "lisp")
+                        (compile (concat "clisp " (buffer-file-name)))
+                      (message "Not a Lisp file"))))
 
-     ;; Lisp code execution with F7
-     (global-set-key (kbd "<f7>") 
-                     (lambda () 
-                       (interactive)
-                       (if (string= (file-name-extension (buffer-file-name)) "lisp")
-                           (compile (concat "clisp " (buffer-file-name)))
-                         (message "Not a Lisp file"))))
+  (defun run-cargo-run ()
+    "Run `cargo run` in the current Rust Cargo project (async)."
+    (interactive)
+    (when (buffer-file-name)
+  	(let ((ext (file-name-extension (buffer-file-name))))
+        (if (not (string= ext "rs"))
+            (message "Not a Rust (.rs) file")
+  		(save-buffer)
+  		(let* ((proj-root (locate-dominating-file (buffer-file-name) "Cargo.toml"))
+                 (default-directory (or proj-root default-directory))
+                 (cmd "cargo run"))
+            (when (not proj-root)
+  			(message "Warning: Could not find Cargo.toml; running in current dir"))
+            (async-shell-command cmd "*Rust Cargo Run*")
+            (switch-to-buffer-other-window "*Rust Cargo Run*"))))))
 
-     ;; Swap bindings
-     (global-set-key (kbd "C-x C-s") 'isearch-forward)
-     (global-set-key (kbd "C-s") 'save-buffer)
+  (global-set-key (kbd "<f8>") 'run-cargo-run)
+  
+
+  ;; Swap bindings
+  (global-set-key (kbd "C-x C-s") 'isearch-forward)
+  (global-set-key (kbd "C-s") 'save-buffer)
 
 #+END_SRC
 
