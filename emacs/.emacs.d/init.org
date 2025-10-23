@@ -531,48 +531,59 @@
 
 * Programming
  #+BEGIN_SRC emacs-lisp
-   (setq js-indent-level 4)
+      (setq js-indent-level 4)
 
-   (use-package typescript-mode
-     :ensure t
-     :config
-     (setq typescript-indent-level 4))
+      (use-package typescript-mode
+        :ensure t
+        :config
+        (setq typescript-indent-level 4))
 
-   (use-package tide
-     :ensure t
-     :config
-     (setq typescript-indent-level 4))
+      (use-package tide
+        :ensure t
+        :config
+        (setq typescript-indent-level 4))
 
-   (use-package rust-mode
-     :ensure t
-     :hook
-     (rust-mode . (lambda ()
-   				 (setq indent-tabs-mode nil)))
-     :config
-     (setq rust-format-on-save t))
+      (use-package rust-mode
+        :ensure t
+        :hook
+        (rust-mode . (lambda ()
+      				 (setq indent-tabs-mode nil)))
+        :config
+        (setq rust-format-on-save t))
 
 
-   (use-package rainbow-delimiters
-     :ensure t
-     :hook (prog-mode . rainbow-delimiters-mode))
+      (use-package rainbow-delimiters
+        :ensure t
+        :hook (prog-mode . rainbow-delimiters-mode))
 
-   (require 'eglot)
-   (add-hook 'python-mode-hook 'eglot-ensure)
-   (add-hook 'html-mode-hook 'eglot-ensure)
-   (add-hook 'css-mode-hook 'eglot-ensure)
-   (add-hook 'js-mode-hook 'eglot-ensure)
-   (add-hook 'c++-mode-hook 'eglot-ensure)
-   (add-hook 'rust-mode-hook 'eglot-ensure)
-   (add-to-list 'eglot-server-programs '(python-mode . ("jedi-language-server")))
-   (add-to-list 'eglot-server-programs '((c-mode c++-mode) . ("clangd")))
-   (add-to-list 'eglot-server-programs '(html-mode . ("vscode-html-language-server" "--stdio")))
-   (add-to-list 'eglot-server-programs '(css-mode . ("vscode-css-language-server" "--stdio")))
-   (add-to-list 'eglot-server-programs '(js-mode . ("typescript-language-server" "--stdio")))
-   (add-to-list 'eglot-server-programs '(rust-mode . ("rust-analyzer")))
-   (setq eglot-send-changes-idle-time 0.5)
-   (defvar x0x0 nil "Temporary fix for undefined x0x0 variable")
+      (require 'eglot)
+      (add-hook 'python-mode-hook 'eglot-ensure)
+      (add-hook 'html-mode-hook 'eglot-ensure)
+      (add-hook 'css-mode-hook 'eglot-ensure)
+      (add-hook 'js-mode-hook 'eglot-ensure)
+      (add-hook 'c++-mode-hook 'eglot-ensure)
+      (add-hook 'rust-mode-hook 'eglot-ensure)
+      (add-to-list 'eglot-server-programs '(python-mode . ("jedi-language-server")))
+      (add-to-list 'eglot-server-programs '((c-mode c++-mode) . ("clangd")))
+      (add-to-list 'eglot-server-programs '(html-mode . ("vscode-html-language-server" "--stdio")))
+      (add-to-list 'eglot-server-programs '(css-mode . ("vscode-css-language-server" "--stdio")))
+      (add-to-list 'eglot-server-programs '(js-mode . ("typescript-language-server" "--stdio")))
+      (add-to-list 'eglot-server-programs '(rust-mode . ("rust-analyzer")))
+      (setq eglot-send-changes-idle-time 0.5)
+      (defvar x0x0 nil "Temporary fix for undefined x0x0 variable")
 
+   (with-eval-after-load 'eglot
+     ;; Proper Rust Analyzer configuration
+     (add-to-list 'eglot-workspace-configuration
+                  '((rust-analyzer
+                     . (:checkOnSave (:command "clippy")
+                        :cargo (:allFeatures t)
+                        :procMacro (:enable :json-false)
+                        :diagnostics (:disabled ["unresolved-proc-macro"])
+
+   					 :files (:excludeDirs [".git" "target" "node_modules"]))))))
  #+END_SRC
+ 
 
 * JP
  #+BEGIN_SRC emacs-lisp
@@ -600,7 +611,7 @@
 
      ;; You can remove this line since Elpaca handles theme paths automatically
      (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-     (load-theme 'omer-blackboard t) 
+     (load-theme 'nice-dark t) 
 
 #+END_SRC
 
@@ -714,23 +725,27 @@
                       (message "Not a Lisp file"))))
 
   (defun run-cargo-run ()
-    "Run `cargo run` in the current Rust Cargo project (async)."
-    (interactive)
-    (when (buffer-file-name)
-  	(let ((ext (file-name-extension (buffer-file-name))))
-        (if (not (string= ext "rs"))
-            (message "Not a Rust (.rs) file")
-  		(save-buffer)
-  		(let* ((proj-root (locate-dominating-file (buffer-file-name) "Cargo.toml"))
-                 (default-directory (or proj-root default-directory))
-                 (cmd "cargo run"))
-            (when (not proj-root)
-  			(message "Warning: Could not find Cargo.toml; running in current dir"))
-            (async-shell-command cmd "*Rust Cargo Run*")
-            (switch-to-buffer-other-window "*Rust Cargo Run*"))))))
+  "Run `cargo run` in a vterm for full interactive support."
+  (interactive)
+  (unless (string= (file-name-extension (buffer-file-name)) "rs")
+    (user-error "Not a Rust file"))
+
+  (save-buffer)
+
+  (let ((default-directory
+         (or (locate-dominating-file default-directory "Cargo.toml")
+             (user-error "Not in a Cargo project"))))
+    (let ((buf (get-buffer-create "*Rust Terminal*")))
+      (with-current-buffer buf
+        (setq default-directory default-directory))
+      (switch-to-buffer-other-window buf)
+      (unless (derived-mode-p 'vterm-mode)
+        (vterm-mode))
+      (vterm-send-string "cargo run")
+      (vterm-send-return))))
 
   (global-set-key (kbd "<f8>") 'run-cargo-run)
-  
+
 
   ;; Swap bindings
   (global-set-key (kbd "C-x C-s") 'isearch-forward)
