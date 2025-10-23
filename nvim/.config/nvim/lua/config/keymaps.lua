@@ -37,6 +37,21 @@ end, { noremap = true, silent = true, desc = "Run Lua code" })
 
 vim.keymap.set("n", "<F8>", function() runner.run("gcc %s -o out && ./out") end,
     { noremap = true, silent = true, desc = "Compile & run C code" })
+
+
+vim.keymap.set("n", "<F9>", function()
+    local filename = vim.fn.expand("%:p")
+    local dir = vim.fn.expand("%:p:h")
+
+    -- Check if we're in a Cargo project
+    if vim.fn.filereadable(dir .. "/Cargo.toml") == 1 then
+        vim.cmd("terminal cargo run")
+    else
+        -- Single file compilation
+        local output_file = vim.fn.expand("%:r")
+        vim.cmd("terminal rustc '" .. filename .. "' -o '" .. output_file .. "' && ./'" .. output_file .. "'")
+    end
+end, { noremap = true, silent = false, desc = "Compile & run Rust code" })
 -- ==========================================================================================
 -- 📂 Buffer Navigation
 -- ==========================================================================================
