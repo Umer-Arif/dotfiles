@@ -6,7 +6,7 @@
         Arial,
         sans-serif;
     font-size: 12px;
-    color: #f6f7f9;
+    color: #c5e4eb;
     border-radius: 20px;
 }
 
@@ -20,19 +20,19 @@ window#waybar {
 
 /*-----module groups----*/
 .modules-right {
-    background-color: rgb(67, 70, 68);
+    background-color: rgb(29, 82, 94);
     /* Fixed syntax error */
     margin: 2px 10px 0 0;
 }
 
 .modules-center {
-    background-color: rgba(67, 70, 68, 1);
+    background-color: rgba(29, 82, 94, 1);
     margin: 2px 0 0 0;
 }
 
 .modules-left {
     margin: 2px 0 0 5px;
-    background-color: rgba(67, 70, 68, 1);
+    background-color: rgba(29, 82, 94, 1);
 }
 
 /*-----modules indv----*/

@@ -104,9 +104,9 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias cdm="cd ~/manga"
+alias fe="cd ~/Documents/FE"
+alias vu="cd ~/Documents/vu-new/Selected/full-pdf"
 alias cdt="cd ~/Downloads/theme"
-alias ic="cd ~/Downloads/Icons-theme"
-alias th="cd ~/Downloads/GTK-theme"
-alias h="hyprpicker -a -f rgb"
-alias push-emacs='~/push-emacs.sh'
+alias ic="cd ~/Downloads/Icons-themes"
+alias th="cd ~/Downloads/GTK-themes"
 export PATH=$PATH:/usr/lib/qt6

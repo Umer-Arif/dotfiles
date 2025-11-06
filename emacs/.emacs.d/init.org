@@ -264,13 +264,7 @@
     (use-package transient
       :ensure t)
 
-    (use-package ox-pandoc
-      :ensure t     ;; Elpaca will fetch it
-      :after org
-      :config
-      (require 'ox-pandoc))
-
-    (use-package vterm
+  (use-package vterm
       :ensure t)
 
     (use-package markdown-mode
@@ -584,7 +578,6 @@
    					 :files (:excludeDirs [".git" "target" "node_modules"]))))))
  #+END_SRC
  
-
 * JP
  #+BEGIN_SRC emacs-lisp
 (use-package kanji-mode
@@ -611,7 +604,7 @@
 
      ;; You can remove this line since Elpaca handles theme paths automatically
      (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-     (load-theme 'nice-dark t) 
+     (load-theme 'desert t) 
 
 #+END_SRC
 
@@ -668,13 +661,15 @@
 
     (global-set-key (kbd "C-c d") 'my/open-dotfiles)
 
-  ;;Open c++ directory
-     (defun my/open-cpp-directory ()
-       "Open the ~/Documents/cpp directory in dired."
+    ;; Open bitewarden-pass config
+     (defun my/open-bitewarden-pass ()
+       "Open the bitewarden-pass"
        (interactive)
-       (dired "~/Documents/cpp-projects"))
+       (find-file "~/bitewarden-vu.txt"))
 
-  (global-set-key (kbd "C-c C-c") 'my/open-cpp-directory)
+     (global-set-key (kbd "C-c b v") 'my/open-bitewarden-pass)
+
+
 #+END_SRC
 
 ** Code Execution
