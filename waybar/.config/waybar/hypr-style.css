@@ -6,7 +6,7 @@
         Arial,
         sans-serif;
     font-size: 12px;
-    color: #c5e4eb;
+    color: #ffffff;
     border-radius: 20px;
 }
 
@@ -20,19 +20,19 @@ window#waybar {
 
 /*-----module groups----*/
 .modules-right {
-    background-color: rgb(29, 82, 94);
+    background-color: rgb(49, 69, 78);
     /* Fixed syntax error */
     margin: 2px 10px 0 0;
 }
 
 .modules-center {
-    background-color: rgba(29, 82, 94, 1);
+    background-color: rgba(49, 69, 78, 1);
     margin: 2px 0 0 0;
 }
 
 .modules-left {
     margin: 2px 0 0 5px;
-    background-color: rgba(29, 82, 94, 1);
+    background-color: rgba(49, 69, 78, 1);
 }
 
 /*-----modules indv----*/
@@ -47,7 +47,7 @@ window#waybar {
 }
 
 #workspaces button.focused {
-    background-color: rgba(238, 233, 172, 0.85);
+    background-color: rgba(238, 233, 172, 1);
 }
 
 #clock,
