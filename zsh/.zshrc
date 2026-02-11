@@ -107,4 +107,13 @@ alias cdm="cd ~/manga"
 alias cdt="cd ~/Downloads/theme"
 alias ic="cd ~/Downloads/Icons-themes"
 alias th="cd ~/Downloads/GTK-themes"
+
+# Emacs Distro Testing Aliases
+alias e-centaur='emacs --init-directory ~/emacs-distros/centaur-macs'
+alias e-spacemacs='emacs --init-directory ~/emacs-distros/spacemacs'
+alias e-doom-sync='DOOMDIR=~/emacs-distros/doom-config ~/emacs-distros/doom/bin/doom sync'
+
+alias avim='XDG_CONFIG_HOME=$HOME/nvim-distros/astronvim nvim'
+
 export PATH=$PATH:/usr/lib/qt6
+alias e-doom='DOOMDIR=~/emacs-distros/doom-config emacs --init-directory ~/emacs-distros/doom'
