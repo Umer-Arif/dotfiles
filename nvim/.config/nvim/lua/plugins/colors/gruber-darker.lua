@@ -6,7 +6,7 @@ return {
     config = function()
         require("gruber-darker").setup({
             option = {
-                transparent = true,
+                transparent = false,
             },
         })
     end,

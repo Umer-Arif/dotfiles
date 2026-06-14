@@ -1,15 +1,15 @@
 //start ups
-spawn-at-startup "swww-daemon"
+spawn-at-startup "awww-daemon"
 spawn-at-startup "waybar"
-spawn-at-startup "niriswitcher"
 spawn-at-startup "mako"
+spawn-at-startup "/home/omer/.cargo/bin/niri-switch-daemon"
 
 hotkey-overlay {
     skip-at-startup
 }
 
 layer-rule {
-    match namespace="^swww-daemon$"
+    match namespace="^awww-daemon$"
     place-within-backdrop true
 }
 
@@ -58,7 +58,7 @@ input {
     mouse {
         // off
         // natural-scroll
-        // accel-speed 0.2
+        //accel-speed 0.2
         // accel-profile "flat"
         // scroll-method "no-scroll"
     }
@@ -168,7 +168,7 @@ layout {
         // off
 
         // How many logical pixels the ring extends out from the windows.
-        width 2
+        width 3
 
         // Colors can be set in a variety of ways:
         // - CSS named colors: "red"
@@ -176,10 +176,10 @@ layout {
         // - CSS-like notation: "rgb(255, 127, 0)", rgba(), hsl() and a few others.
 
         // Color of the ring on the active monitor.
-        active-color "#4B0082ff"
+        active-color "#F4D659FF"
 
         // Color of the ring on inactive monitors.
-        inactive-color "#505050"
+        inactive-color "#005D3BFF"
 
         // You can also use gradients. They take precedence over solid colors.
         // Gradients are rendered the same as CSS linear-gradient(angle, from, to).
@@ -203,8 +203,8 @@ layout {
         // If you enable the border, you probably want to disable the focus ring.
         off 
 
-        width 4
-        active-color "#7fc8ff"
+        width 2
+        active-color "#6FDEFAff"
         inactive-color "#505050"
 
         // Color of the border around windows that request your attention.
@@ -264,29 +264,65 @@ layout {
     }
 }
 
-//window opacity.
+// Window opacity and blur configuration
 
+window-rule {
+    match app-id="com.mitchellh.ghostty"
+    opacity 0.9
+    draw-border-with-background false
+    background-effect {
+        blur true
+    }
+}
+	
+
+
+// Emacs
+window-rule {
+    match app-id="^emacs$"
+    opacity 1.0
+    draw-border-with-background false
+    background-effect {
+        blur true
+    }
+}
+
+// Kitty terminal (opacity only, no blur unless you want to add it)
 window-rule {
     match app-id="kitty"
     opacity 1.0
     draw-border-with-background false
 }
-window-rule {
-    match app-id="emacs"
-    opacity 1.0
-    draw-border-with-background false
-}
+
+// Sioyek PDF viewer
 window-rule {
     match app-id="sioyek"
-    opacity 0.9
+    opacity 0.7
     draw-border-with-background false
+    
+    // Enable the background blur effect explicitly
+    background-effect {
+        blur true
+    }
 }
+
+// Niri switcher
 window-rule {
     match app-id="niriswitcher"
     opacity 0.7
     draw-border-with-background false
 }
-
+layer-rule {
+    match namespace="^launcher$"
+    
+    background-effect {
+        blur true
+    }
+    
+    // Optional: Matches Fuzzel's default 10px rounded corners 
+    // to prevent the blur from clipping at the sharp edges
+    geometry-corner-radius 10 
+}
 
 // Uncomment this line to ask the clients to omit their client-side decorations if possible.
 // If the client will specifically ask for CSD, the request will be honored.
@@ -329,7 +365,7 @@ animations {
 // Example: enable rounded corners for all windows.
 // (This example rule is commented out with a "/-" in front.)
 window-rule {
-    geometry-corner-radius 12
+    geometry-corner-radius 3
     clip-to-geometry true
 }
 
@@ -350,17 +386,19 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
-    Mod+T hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
+    Mod+G hotkey-overlay-title="Open a Terminal: Ghostty" { spawn "ghostty"; }
     Mod+E hotkey-overlay-title="Run an Application: emacs" { spawn "emacs"; }
     Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
-	Mod+B hotkey-overlay-title="Run an Application: chromium" { spawn "chromium"; }
-	Mod+N hotkey-overlay-title="Run an Application: nemo" { spawn "nemo"; }
-	Mod+Shift+Q hotkey-overlay-title="Open powermenu: powermenu" { spawn "~/.local/bin/powermenu.zsh"; }
-	Alt+Tab repeat=false { spawn "niriswitcherctl" "show" "--window"; }
-    Alt+Shift+Tab repeat=false { spawn "niriswitcherctl" "show" "--workspace"; }
+	Mod+B hotkey-overlay-title="Run an Application: firefox" { spawn "firefox"; }
+    Mod+N hotkey-overlay-title="Run an Application: nemo" { spawn "nemo"; }
+    Mod+Shift+Q hotkey-overlay-title="Open powermenu: powermenu" { spawn "~/.local/bin/powermenu.zsh"; }
+    Mod+Shift+C hotkey-overlay-title="Run Application: Chatbox" { spawn "/home/omer/.local/bin/Chatbox-1.20.3-x86_64.AppImage"; }
+	Alt+Tab repeat=false { spawn "/home/omer/.cargo/bin/niri-switch"; }
+    Alt+Shift+Tab repeat=false { spawn "/home/omer/.cargo/bin/niri-switch" "show" "--workspace"; }
 	Mod+Shift+B hotkey-overlay-title="Increase Brightness" { spawn "brightnessctl set +5%"; }
 	Mod+Alt+B   hotkey-overlay-title="Decrease Brightness" { spawn "brightnessctl set 5%-"; }
 	Mod+Ctrl+B  hotkey-overlay-title="Set Brightness 90%"  { spawn "brightnessctl set 90%"; }
+	Mod+Alt+R hotkey-overlay-title="Emoji Picker: rofimoji" { spawn "rofimoji" "--selector" "fuzzel" "--typer" "wtype"; }
 
 
 	Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "hyprlock"; }

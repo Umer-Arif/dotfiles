@@ -3,12 +3,11 @@ return {
     "nvim-lualine/lualine.nvim",
     enabled = true,
     dependencies = { 'nvim-tree/nvim-web-devicons' },
-    -- This 'config' function runs AFTER the plugin is loaded by Lazy.nvim
     config = function()
         require('lualine').setup {
             options = {
                 icons_enabled = true,
-                theme = 'auto', -- 'auto' will try to pick based on your colorscheme
+                theme = 'auto',
                 component_separators = { left = '', right = '' },
                 section_separators = { left = '', right = '' },
                 disabled_filetypes = {
@@ -17,24 +16,17 @@ return {
                 },
                 ignore_focus = {},
                 always_divide_middle = true,
-                always_show_tabline = true, -- If you want the tabline always visible
-                globalstatus = false,       -- Set to true to have a single statusline for all windows
+                always_show_tabline = true,
+                globalstatus = false,
                 refresh = {
                     statusline = 1000,
                     tabline = 1000,
                     winbar = 1000,
-                    refresh_time = 16, -- ~60fps
+                    refresh_time = 16,
                     events = {
-                        'WinEnter',
-                        'BufEnter',
-                        'BufWritePost',
-                        'SessionLoadPost',
-                        'FileChangedShellPost',
-                        'VimResized',
-                        'Filetype',
-                        'CursorMoved',
-                        'CursorMovedI',
-                        'ModeChanged',
+                        'WinEnter', 'BufEnter', 'BufWritePost', 'SessionLoadPost',
+                        'FileChangedShellPost', 'VimResized', 'Filetype',
+                        'CursorMoved', 'CursorMovedI', 'ModeChanged',
                     },
                 }
             },
@@ -43,19 +35,17 @@ return {
                     {
                         'mode',
                         fmt = function(str)
-                            return ' ' .. str -- prepend Vim logo
+                            return ' ' .. str
                         end,
-                        --gui = 'bold', -- make it bold
                     }
                 },
-
                 lualine_b = { 'diff', 'diagnostics' },
                 lualine_c = { { 'filename', path = 1 } },
                 lualine_x = { 'filetype' },
                 lualine_y = {
                     {
-                        function() return vim.fn.line('$') end, -- returns total lines in buffer
-                        icon = '', -- optional: icon for line count
+                        function() return vim.fn.line('$') end,
+                        icon = '',
                     }
                 },
                 lualine_z = { 'location' }
@@ -68,12 +58,28 @@ return {
                 lualine_y = {},
                 lualine_z = {}
             },
-            tabline = {}, -- Empty table means no tabline, or configure it here
-            winbar = {},  -- Empty table means no winbar, or configure it here
+            tabline = {},
+            winbar = {},
             inactive_winbar = {},
             extensions = {}
         }
+
+        local function bold_lualine_a()
+            local modes = { 'normal', 'insert', 'visual', 'command', 'replace', 'terminal', 'inactive' }
+            for _, mode in ipairs(modes) do
+                local hl_name = 'lualine_a_' .. mode
+                local hl = vim.api.nvim_get_hl(0, { name = hl_name })
+                if hl and next(hl) then
+                    hl.bold = true
+                    vim.api.nvim_set_hl(0, hl_name, hl)
+                end
+            end
+        end
+
+        bold_lualine_a()
+        vim.api.nvim_create_autocmd('ColorScheme', {
+            pattern = '*',
+            callback = bold_lualine_a,
+        })
     end,
-    -- You can add `event = "VeryLazy"` to lazily load it, if desired.
-    -- event = "VeryLazy",
 }

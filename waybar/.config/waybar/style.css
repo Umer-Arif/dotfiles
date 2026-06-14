@@ -1,145 +1,55 @@
 * {
     border: none;
-    font-family: Font Awesome, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    color: #f6f7f9;
-    border-radius: 5px;
-}
-
-window {
-    /*font-weight: bold;*/
+    font-family: "JetBrainsMono Nerd Font", "Roboto", sans-serif;
+    font-size: 13px;
 }
 
 window#waybar {
-    background: rgba(0, 0, 0, 0);
-    margin-top: 10px;
-    /* Added gap on top of bar */
+    background-color: transparent;
 }
 
-/*-----module groups----*/
-.modules-right {
-    margin: 2px 10px 0 0;
-}
-
-.modules-center {
-    margin: 2px 0 0 0;
-}
-
-.modules-left {
-    margin: 2px 0 0 5px;
-}
-
-/*-----modules indv----*/
-#workspaces button {
-    padding: 1px 5px;
-    background-color: rgba(18, 8, 24, 0.7);
-    /* Teal for workspace buttons */
-}
-
-#workspaces button:hover {
-    box-shadow: inherit;
-    background-color: inherit;
-}
-
-#workspaces button.focused {
-    background-color: rgb(91, 41, 138);
-}
-
-#clock {
-    padding: 0 10px;
-    background-color: rgba(75, 0, 130, 1);
-    border-radius: 10px;
-    /* Indigo for clock */
-}
-
-#battery {
-    padding: 0 10px;
-    background-color: rgba(75, 0, 130, 1);
+/* Base module style */
+#workspaces, #window, #clock, #pulseaudio, #network, #cpu, #memory, #battery, #tray {
+    background-color: rgba(64, 20, 2, 0.8);
+    color: #e4e7f2;
+    padding: 0 12px;
+    margin: 4px 2px;
     border-radius: 10px;
 }
 
-#cpu {
-    padding: 0 10px;
-    background-color: rgb(150, 110, 216);
-    border-radius: 10px;
-    /* Blue for CPU */
-}
-
-#memory {
-    padding: 0 10px;
-    background-color: rgb(82, 5, 97);
-    border-radius: 10px;
-    /* Red for RAM */
-}
-
-#temperature {
-    padding: 0 10px;
-    border-radius: 10px;
-}
-
-#network {
-    padding: 0 10px;
-    background-color: rgb(13, 9, 15);
-    border-radius: 10px;
-    /* Yellow for WiFi */
-}
-
-#pulseaudio {
-    padding: 0 10px;
-    background-color: rgb(56, 37, 46);
-    border-radius: 10px;
-    /* Pink for volume */
-}
-
-#custom-media,
-#tray,
-#mode,
-#custom-power,
-#custom-menu,
-#idle_inhibitor {
-    padding: 0 10px;
-}
-
-#mode {
-    color: #cc3436;
+/* 1. Window Styling - Fixed Background */
+#window {
+    background-color: rgba(88, 91, 112, 0.5); /* Subtle but visible */
+    color: #ffffff;
     font-weight: bold;
 }
 
-#custom-power {
-    background-color: rgba(0, 119, 179, 0.6);
-    border-radius: 100px;
-    margin: 5px 5px;
-    padding: 1px 1px 1px 6px;
+/* Hide window background if empty */
+window#waybar.empty #window {
+    background-color: transparent;
 }
 
-/*-----Indicators----*/
-#idle_inhibitor.activated {
-    color: #2dcc36;
-}
-
-#pulseaudio.muted {
-    color: #cc3436;
+/* 2. Battery Color Logic */
+#battery {
+    color: #f38ba8; /* Default (Discharging) color - Reddish/Pink */
 }
 
 #battery.charging {
-    color: #2dcc36;
+    color: #a6e3a1; /* Green when charging */
+    background-color: rgba(27, 25, 18, 0.8);
+}
+
+#battery.full {
+    color: #89b4fa; /* Blue when full */
 }
 
 #battery.warning:not(.charging) {
-    color: #e6e600;
+    color: #fab387; /* Orange warning */
 }
 
-#battery.critical:not(.charging) {
-    color: #cc3436;
-}
-
-#temperature.critical {
-    color: #cc3436;
-}
-
-/*-----Colors----*/
-/*
- *rgba(0,85,102,1),#005566 --> Indigo(dye)
- *rgba(0,43,51,1),#002B33 --> Dark Green 
- *rgba(0,153,153,1),#009999 --> Persian Green 
- */
+/* Other Module Colors */
+#workspaces button { padding: 0 6px; color: #6c7086; }
+#workspaces button.focused { color: #b4befe; }
+#clock { color: #f5c2e7; }
+#pulseaudio { color: #89b4fa; }
+#network { color: #94e2d5; }

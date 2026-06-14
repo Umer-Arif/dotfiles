@@ -7,7 +7,7 @@ return {
     config = function()
         require("kanagawa").setup({
             option = {
-                transparent = true,
+                transparent = false,
             },
         })
     end,

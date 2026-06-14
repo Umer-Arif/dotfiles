@@ -20,7 +20,7 @@ return {
                 "cssls",
                 "ts_ls",
             },
-            automatic_installation = false,
+            automatic_installation = true,
         },
     },
     {
@@ -84,10 +84,17 @@ return {
                 },
                 html = { on_attach = on_attach },
                 cssls = { on_attach = on_attach },
+                cl_lsp = { on_attach = on_attach },
+                haskell_language_server = { on_attach = on_attach },
             }
 
             -- Initialize nvim-lspconfig to make its configurations available
             require("lspconfig")
+
+            -- Ensure extra servers are installed via Mason
+            vim.schedule(function()
+                pcall(vim.cmd, "MasonInstall cl-lsp haskell-language-server")
+            end)
 
             -- Enable servers using the new native method
             for server_name, config in pairs(servers) do
@@ -96,5 +103,4 @@ return {
             end
         end,
     },
-    -- ... rest of your plugins (typescript-tools.nvim, blink.cmp, etc.) remain the same
 }

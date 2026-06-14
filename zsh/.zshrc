@@ -103,17 +103,30 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias cdm="cd ~/manga"
 alias cdt="cd ~/Downloads/theme"
 alias ic="cd ~/Downloads/Icons-themes"
 alias th="cd ~/Downloads/GTK-themes"
+alias cl="cd ~/Documents/logitra"
 
 # Emacs Distro Testing Aliases
 alias e-centaur='emacs --init-directory ~/emacs-distros/centaur-macs'
-alias e-spacemacs='emacs --init-directory ~/emacs-distros/spacemacs'
-alias e-doom-sync='DOOMDIR=~/emacs-distros/doom-config ~/emacs-distros/doom/bin/doom sync'
-
 alias avim='XDG_CONFIG_HOME=$HOME/nvim-distros/astronvim nvim'
-
 export PATH=$PATH:/usr/lib/qt6
-alias e-doom='DOOMDIR=~/emacs-distros/doom-config emacs --init-directory ~/emacs-distros/doom'
+
+# opencode
+export PATH=/home/omer/.opencode/bin:$PATH
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+. "$HOME/.local/bin/env"
+
+# Hermes Agent — ensure ~/.local/bin is on PATH
+export PATH="$HOME/.local/bin:$PATH"
+
+export OPENROUTER_API_KEY=""
+export OPENROUTER_MODEL="nvidia/nemotron-3-super-120b-a12b:free"
+unset ANTHROPIC_API_KEY
+export GROQ_API_KEY=""
+alias nvim-fun='NVIM_APPNAME="nvim-fun" nvim'

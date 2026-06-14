@@ -1,0 +1,21 @@
+# Font Settings
+font-family = "Iosevka"
+font-size = 14
+font-style = "italic"
+
+# Appearance
+background-opacity = 0.9
+background-blur-radius = 20
+background-blur = true
+
+# Keybindings
+# Maps Ctrl+C to Copy and Ctrl+V to Paste
+keybind = ctrl+c=copy_to_clipboard
+keybind = ctrl+v=paste_from_clipboard
+
+# Maps Ctrl+Shift+C to stop commands (SIGINT)
+keybind = ctrl+shift+c=text:\x03
+
+theme = "Belafonte Night"
+
+keybind = f11=toggle_fullscreen

@@ -14,21 +14,6 @@ autocmd("BufWritePre", {
     desc = "Auto-create directories before saving",
 })
 
--- 💾 Auto-format on save (LSP based)
-autocmd("BufWritePre", {
-    pattern = { "*.c", "*.lua", "*.py", "*.js", "*.ts", "*.json", "*.html", "*.css" },
-    callback = function()
-        local clients = vim.lsp.get_active_clients({ bufnr = 0 })
-        for _, client in ipairs(clients) do
-            if client.supports_method("textDocument/formatting") then
-                vim.lsp.buf.format({ async = false })
-                return
-            end
-        end
-    end,
-    desc = "Format on save with LSP",
-})
-
 -- 🖱️ Highlight on yank
 autocmd("TextYankPost", {
     pattern = "*",
