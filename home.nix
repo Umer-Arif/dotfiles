@@ -2,7 +2,7 @@
 
 {
   # The initial state version installation baseline
-  home.stateVersion = "25.11";
+  home.stateVersion = "26.05";
 
   programs.home-manager.enable = true;
 
@@ -14,7 +14,51 @@
     ".config/emacs".source = ./emacs;
     ".config/ghostty".source = ./ghostty;
     ".config/mpv".source = ./mpv;
+    ".config/nvim".source = ./nvim;
+    ".config/waybar".source = ./waybar;
+    ".config/mako".source = ./mako;
+    ".config/fuzzel".source = ./fuzzel;
   };
+
+
+# Missing:
+xdg.portal.wlr.enable = true; # For Wayland screen sharing
+
+  programs.emacs = {
+    enable = true;
+    package = pkgs.emacs; # No more custom symlinkJoin wrapper!
+
+    extraPackages = epkgs: [
+      epkgs.treesit-grammars.with-all-grammars
+      epkgs.envrc       
+    ];
+  };
+
+
+  # Add to home.nix:
+programs.direnv = {
+  enable = true;
+  nix-direnv.enable = true;
+};
+
+# Add to home.nix:
+gtk = {
+  enable = true;
+  theme = {
+    name = "Arc-Dark";
+    package = pkgs.arc-theme;
+  };
+  iconTheme = {
+    name = "Papirus-Dark";
+    package = pkgs.papirus-icon-theme;
+  };
+  cursorTheme = {
+    name = "Bibata-Modern-Ice";
+    package = pkgs.bibata-cursors;
+  };
+};
+
+
 
   programs.firefox = {
     enable = true;

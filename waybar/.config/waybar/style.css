@@ -8,9 +8,19 @@ window#waybar {
     background-color: transparent;
 }
 
-/* Base module style */
-#workspaces, #window, #clock, #pulseaudio, #network, #cpu, #memory, #battery, #tray {
-    background-color: rgba(64, 20, 2, 0.8);
+/* Base module style - Added custom-reboot and custom-shutdown here */
+#workspaces,
+#window,
+#clock,
+#pulseaudio,
+#network,
+#cpu,
+#memory,
+#battery,
+#tray,
+#custom-reboot,
+#custom-shutdown {
+    background-color: rgba(64, 50, 90, 0.9);
     color: #e4e7f2;
     padding: 0 12px;
     margin: 4px 2px;
@@ -19,7 +29,8 @@ window#waybar {
 
 /* 1. Window Styling - Fixed Background */
 #window {
-    background-color: rgba(88, 91, 112, 0.5); /* Subtle but visible */
+    background-color: rgba(88, 91, 112, 0.9);
+    /* Subtle but visible */
     color: #ffffff;
     font-weight: bold;
 }
@@ -31,25 +42,76 @@ window#waybar.empty #window {
 
 /* 2. Battery Color Logic */
 #battery {
-    color: #f38ba8; /* Default (Discharging) color - Reddish/Pink */
+    color: #f38ba8;
+    /* Default (Discharging) color - Reddish/Pink */
 }
 
 #battery.charging {
-    color: #a6e3a1; /* Green when charging */
+    color: #a6e3a1;
+    /* Green when charging */
     background-color: rgba(27, 25, 18, 0.8);
 }
 
 #battery.full {
-    color: #89b4fa; /* Blue when full */
+    color: #89b4fa;
+    /* Blue when full */
 }
 
 #battery.warning:not(.charging) {
-    color: #fab387; /* Orange warning */
+    color: #fab387;
+    /* Orange warning */
 }
 
 /* Other Module Colors */
-#workspaces button { padding: 0 6px; color: #6c7086; }
-#workspaces button.focused { color: #b4befe; }
-#clock { color: #f5c2e7; }
-#pulseaudio { color: #89b4fa; }
-#network { color: #94e2d5; }
+#workspaces button {
+    padding: 0 6px;
+    color: #6c7086;
+}
+
+#workspaces button.focused {
+    color: #b4befe;
+}
+
+#clock {
+    color: #f5c2e7;
+}
+
+#pulseaudio {
+    color: #89b4fa;
+}
+
+#pulseaudio:hover {
+    background-color: #89b4fa;
+    /* Full orange background on hover */
+    color: #11111b;
+    /* Dark text on highlight */
+}
+
+#cpu {
+    color: #d098f0;
+}
+
+/* 3. Custom Power Menu Button Customizations */
+#custom-reboot {
+    color: #fab387;
+    /* Soft orange default text color */
+}
+
+#custom-reboot:hover {
+    background-color: #fab387;
+    /* Full orange background on hover */
+    color: #11111b;
+    /* Dark text on highlight */
+}
+
+#custom-shutdown {
+    color: #f38ba8;
+    /* Reddish default text color */
+}
+
+#custom-shutdown:hover {
+    background-color: #f38ba8;
+    /* Full red background on hover */
+    color: #11111b;
+    /* Dark text on highlight */
+}

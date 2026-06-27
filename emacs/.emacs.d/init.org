@@ -106,8 +106,7 @@
 
 
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/t2-vscode")
-  (load-theme 'omer-search-lights)
-
+  (load-theme 'omer-tokyo-night)
 
 
 #+END_SRC
@@ -342,67 +341,6 @@
 
 * Packages
 #+BEGIN_SRC emacs-lisp
-  (use-package csv-mode
-    :ensure t)
-
-      (use-package gptel
-        :ensure t
-        :config
-        (gptel-make-openai "OpenRouter"
-          :host "openrouter.ai"
-          :endpoint "/api/v1/chat/completions"
-          :key ""
-          :models '(meta-llama/llama-3.3-70b-instruct:free
-      			  qwen/qwen3-coder:free
-      			  liquid/lfm-2.5-1.2b-thinking:free
-      			  google/gemma-4-31b-it:free
-      			  poolside/laguna-xs.2:free
-      			  nvidia/nemotron-3-nano-30b-a3b:free
-      			  z-ai/glm-4.5-air:free
-      			  poolside/laguna-m.1:free
-      			  openai/gpt-oss-120b:free
-      			  minimax/minimax-m2.5:free
-    			  nvidia/nemotron-3-super-120b-a12b:free))
-
-        (setq gptel-model 'minimax/minimax-m2.5:free
-              gptel-backend (gptel-get-backend "OpenRouter"))
-
-        ;; Set the default system instruction to force Org syntax
-        (setq gptel-directives
-      		'((default . "You are a helpful assistant.")
-      		  (org-assistant . "You are an Org-mode assistant. Respond only using Org-mode syntax.")
-      		  (React-teacher . "You are a senior React/TypeScript instructor with 10+ years of experience.
-
-    When I share my code:
-    1. First, tell WHAT is wrong and WHY it's problematic (performance, anti-pattern, accessibility, type safety, or React specific issues)
-    2. Then provide Correction only for that part
-    3. Explain the key difference between my version and yours using a simple analogies
-
-    CRITICAL RULES:
-    - Never assume missing imports - point them out
-    - Always prefer functional components and hooks over classes
-    - Include proper TypeScript types (no `any`)
-    - Explain edge cases I haven't considered
-    - Keep explanations under 200 words for simple issues, 400 for complex ones
-    - Use bullet points only for listing more than 2 items
-
-    Format your response exactly like this:
-
-    ## ❌ What's wrong and Why
-    [2-3 bullet points with specific consequences]
-
-    ## ✅ Corrected Code
-    [Correction of that specific part]
-
-    ## 📝 What Changed
-    [Listing key changes with brief explanations]
-
-    ## 💡 Pro Tip
-    [One actionable best practice for future reference]
-
-    keep it under 400 tokens only. No extra explanations unless i ask.")
-      		  (programmer . "You only reply in python code with comments that explains."))))
-
 
 
         (use-package goto-line-preview
@@ -459,8 +397,6 @@
           :hook ((prog-mode . smartparens-mode)
                  (org-mode . smartparens-mode)))
 
-        (use-package vterm
-          :ensure t)
 
         (use-package undo-tree
           :ensure t
@@ -472,17 +408,6 @@
           (make-directory (expand-file-name "undo/" user-emacs-directory) t)
           (global-undo-tree-mode))
 
-
-        (use-package exec-path-from-shell
-          :ensure t
-          :init
-          (exec-path-from-shell-initialize))
-
-        ;;(use-package which-key
-        ;;        :ensure t
-        ;;        :config
-        ;;        (setq which-key-idle-delay 0.3)
-        ;;        (which-key-mode))
 
         (use-package ligature
           :ensure t
@@ -499,13 +424,6 @@
 
 
         (use-package transient
-          :ensure t)
-
-        (use-package yasnippet
-          :ensure t)
-
-        ;; Pre-made snippets for most languages (Web, Python, etc.)
-        (use-package yasnippet-snippets
           :ensure t)
 
         (use-package markdown-mode
@@ -581,194 +499,9 @@
     (doom-modeline-minor-modes nil))         ; Remove minor modes display-line-numbers-type
 #+END_SRC
 
-* Programming
-** General
-
-#+BEGIN_SRC emacs-lisp
-  ;; 1. Prevent the pop-up buffer from appearing at all
-  (setq warning-minimum-level :error)
-
-  ;; 2. Specifically tell the warning system to ignore these categories
-  (setq warning-suppress-log-types '((comp) (bytecomp)))
-  (setq warning-suppress-types '((comp) (bytecomp)))
-
-  ;; 3. For Native Compilation (Emacs 28+)
-  (setq native-comp-async-report-warnings-errors 'silent)
-#+END_SRC
-
-** Treesitter
-#+BEGIN_SRC emacs-lisp
-  ;; Define this function but don't run it automatically
-  (defun my/install-treesit-grammars ()
-    "Install all my tree-sitter grammars only if not already installed."
-    (interactive)
-    (setopt treesit-language-source-alist
-            '((python "https://github.com/tree-sitter/tree-sitter-python" "v0.20.0")
-              (c "https://github.com/tree-sitter/tree-sitter-c" "v0.20.0")
-              (cpp "https://github.com/tree-sitter/tree-sitter-cpp" "v0.20.0")
-              (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.20.0")
-              (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
-              (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")
-              (rust "https://github.com/tree-sitter/tree-sitter-rust" "v0.18.2")
-              (lua "https://github.com/tree-sitter/tree-sitter-lua" "v0.0.13")))
-
-    (dolist (lang '(python c cpp javascript typescript tsx rust lua))
-      (if (treesit-language-available-p lang)
-          (message "%s already installed, skipping..." lang)
-        (progn
-          (message "Installing %s..." lang)
-          (treesit-install-language-grammar lang)
-          (message "%s installed!" lang))))
-
-    (message "All grammars processed!"))
-
-  ;; Then run M-x my/install-treesit-grammars only when needed
-#+END_SRC
-** Language support
-#+BEGIN_SRC emacs-lisp
-        ;; Tree-sitter settings (keep at top)
-        (setq treesit-font-lock-level 4)
-
-  ;; Rust mode - remove treesitter derive since it's not working
-        (use-package rust-mode
-          :ensure t
-          :mode ("\\.rs\\'" . rust-mode))  ; Explicitly associate .rs files
-
-;      ;; 1. Pure TypeScript files (.ts)
- ;;     (use-package typescript-mode
-   ;;     :ensure t
-     ;;;   :mode ("\\.ts\\'" . typescript-mode)
-        ;;:hook (typescript-mode . lsp-bridge))
-
-  ;;  (use-package web-mode
-  ;;   :ensure t
-  ;;   :mode ("\\.tsx\\'" "\\.jsx\\'" "\\.html\\'")
-  ;;   :ho  ;; (when (string-equal "tsx" (file-name-extension buffer-file-name))
-    ;;   (web-mode-set-content-type "jsx"))
-   ;; :config
-    ;; Your existing indentation and face settings here...
-    ;; (setq web-mode-markup-indent-offset 2)
-    ;; (setq web-mode-code-indent-offset 2)
-    ;; (setq-local lsp-buffer-uri "file:///fake.tsx")
-    ;; Enable modern features
-    ;; (setq web-mode-enable-auto-pairing t)
-    ;; (setq web-mode-enable-auto-quoting t)
-    ;; (set-face-foreground 'web-mode-html-tag-face "#3B697F")
-
-
-
-
-      ;; 3. Lua mode
-      (use-package lua-mode
-        :ensure t
-        :mode ("\\.lua\\'" . lua-mode))
-
-
-        ;; Sly for Common Lisp
-        (use-package sly
-          :ensure t
-          :init
-          (setq sly-mrepl-pop-sylvester nil)
-          :custom
-          (inferior-lisp-program "sbcl"))
-
-#+END_SRC
-
-** Lsp
-#+BEGIN_SRC emacs-lisp
-      ;; web-mode
-      (use-package web-mode
-        :ensure t
-        :mode ("\\.tsx\\'" "\\.ts\\'" "\\.jsx\\'" "\\.js\\'" "\\.html\\'")
-        :config
-        (defun my/web-mode-tsx-setup ()
-          (cond
-           ((string-equal "tsx" (file-name-extension buffer-file-name))
-            (web-mode-set-content-type "jsx"))
-           ((string-equal "ts" (file-name-extension buffer-file-name))
-            (web-mode-set-content-type "typescript"))))
-        (add-hook 'web-mode-hook #'my/web-mode-tsx-setup)
-        (setq web-mode-markup-indent-offset 2)
-        (setq web-mode-code-indent-offset 2)
-        (setq web-mode-enable-auto-pairing t)
-        (setq web-mode-enable-auto-quoting t))
-
-      ;; lsp-bridge - minimal
-      (add-to-list 'load-path (expand-file-name "lsp-bridge" user-emacs-directory))
-      (require 'yasnippet)
-      (yas-global-mode 1)
-      (require 'lsp-bridge)
-      (add-to-list 'lsp-bridge-multi-lang-server-mode-list '(web-mode . "typescriptreact_tailwindcss"))
-      (setq lsp-bridge-python-lsp-server "pyright")
-
-  ;; Set user directory for custom configs
-  (setq lsp-bridge-user-multiserver-dir
-        (expand-file-name "lsp-bridge-user-multiserver-dir" user-emacs-directory))
-
-  ;; Nuke all web-mode multi-server defaults
-  (setq lsp-bridge-multi-lang-server-mode-list
-        (cl-remove-if (lambda (item) (eq (car item) 'web-mode))
-                      lsp-bridge-multi-lang-server-mode-list))
-
-  ;; Add our Tailwind config
-  (add-to-list 'lsp-bridge-multi-lang-server-mode-list '(web-mode . "web_tailwind"))
-
-      (global-lsp-bridge-mode)
-
-   ;; ===== ADD THESE LINES HERE =====
-      ;; Org mode settings for lsp-bridge
-      (setq lsp-bridge-enable-org-babel t)
-      (setq lsp-bridge-org-babel-lang-list '("emacs-lisp"))
-      ;; Keep lsp-bridge active in org-mode for completions
-      (add-to-list 'lsp-bridge-default-mode-hooks 'org-mode-hook)
-      ;; Optional: Make lsp-bridge quieter
-      (setq lsp-bridge-enable-message nil)
-      ;; ===== END OF ADDED LINES ====
-
-      (add-hook 'web-mode-hook #'lsp-bridge-mode)
-
-#+END_SRC
-
-** Completion
-#+BEGIN_SRC emacs-lisp
-
-
-#+END_SRC
-** formatting
-#+BEGIN_SRC emacs-lisp
-  (use-package apheleia
-    :ensure t
-    :init
-    (apheleia-global-mode +1)
-    :config
-    ;; Keep these formatters (install them first)
-    (setq apheleia-formatters
-          '((black . ("black" "-"))
-            (prettier . ("prettier" "--stdin-filepath" filepath))
-            (rustfmt . ("rustfmt"))
-            (clang-format . ("clang-format"))))
-
-    ;; Keep only modes you actually use
-    (setq apheleia-mode-alist
-          '((python-ts-mode . black)
-            (python-mode . black)
-            (rust-mode . rustfmt)      ; Changed from rust-ts-mode
-            (c-ts-mode . clang-format)
-            (c++-ts-mode . clang-format)
-            (js-ts-mode . prettier)    ; For JavaScript
-            (typescript-mode . prettier) ; For TS/TSX files
-            (web-mode . prettier))))
-#+END_SRC
 * Keybinds
 ** Directory navigation
 #+BEGIN_SRC emacs-lisp
-    ;;Open hyprland directory
-    (defun my/open-hypr-directory ()
-      "Open the ~/.config/hypr directory in dired."
-      (interactive)
-      (dired "~/dotfiles/hypr/.config/hypr"))
-
-    (global-set-key (kbd "C-c h") 'my/open-hypr-directory)
 
     ;; Style.css for waybar
     (defun my/open-waybar-style ()
@@ -916,4 +649,115 @@
 
   ;; Optional: Make Backspace delete backward (if you're having issues)
   (keyboard-translate ?\C-h ?\C-?)  ; This swaps DEL and C-h - likely NOT what you want
+#+END_SRC
+* Programming
+#+BEGIN_SRC emacs-lisp
+  ;; ==============================================================================
+  ;; 1. AUTO-CONNECT TREE-SITTER MAJOR MODES
+  ;; ==============================================================================
+  ;; Automatically swap traditional major modes for their Tree-sitter counterparts
+  (setq major-mode-remap-alist
+        '((python-mode     . python-ts-mode)
+          (rust-mode       . rust-ts-mode)
+          (typescript-mode . typescript-ts-mode)
+          (js-mode         . js-ts-mode)
+          (tsx-mode        . tsx-ts-mode)
+          (bash-mode       . bash-ts-mode)
+          (c-mode          . c-ts-mode)
+          (c++-mode        . c++-ts-mode)))
+
+  ;; Hard-map file extensions to guarantee they open in Tree-sitter mode
+  (add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+
+
+  ;; ==============================================================================
+  ;; 2. REGISTER LANGUAGE SERVERS IN EGLOT
+  ;; ==============================================================================
+  (with-eval-after-load 'eglot
+    ;; Register Rust
+    (add-to-list 'eglot-server-programs
+                 '(rust-ts-mode . ("rust-analyzer")))
+
+    ;; Register Python
+    (add-to-list 'eglot-server-programs
+                 '(python-ts-mode . ("pyright-langserver" "--stdio")))
+
+    ;; Register TypeScript & TSX
+    (add-to-list 'eglot-server-programs
+                 '((typescript-ts-mode tsx-ts-mode) . ("typescript-language-server" "--stdio"))))
+
+
+  ;; ==============================================================================
+  ;; 3. THE NIXOS SMART AUTOMATION (POLLING LOOKUP - FIXED FOR EMACS 30)
+  ;; ==============================================================================
+  (defun my/auto-start-eglot-when-path-ready (buffer program-name)
+    "Poll the buffer until envrc injects the path containing PROGRAM-NAME, then start Eglot."
+    (when (buffer-live-p buffer)
+      (with-current-buffer buffer
+        (if (executable-find program-name)
+            ;; The language server binary is finally found in the PATH! Start Eglot.
+            (eglot-ensure)
+          ;; Binary not found yet, check again in 0.1 seconds
+          (run-with-timer 0.1 nil #'my/auto-start-eglot-when-path-ready buffer program-name)))))
+
+  (defun my/trigger-nix-eglot-sequence ()
+    "Initialize envrc and figure out which binary to watch for based on major-mode."
+    (envrc-mode 1)
+    (let ((binary-name (cond
+                        ((derived-mode-p 'rust-ts-mode) "rust-analyzer")
+                        ((derived-mode-p 'python-ts-mode) "pyright-langserver")
+                        ((derived-mode-p 'typescript-ts-mode) "typescript-language-server")
+                        ((derived-mode-p 'tsx-ts-mode) "typescript-language-server"))))
+      (when binary-name
+        (my/auto-start-eglot-when-path-ready (current-buffer) binary-name))))
+
+  ;; Assign our clean polling sequence directly to your major modes
+  (add-hook 'rust-ts-mode-hook       #'my/trigger-nix-eglot-sequence)
+  (add-hook 'python-ts-mode-hook     #'my/trigger-nix-eglot-sequence)
+  (add-hook 'typescript-ts-mode-hook #'my/trigger-nix-eglot-sequence)
+  (add-hook 'tsx-ts-mode-hook        #'my/trigger-nix-eglot-sequence)
+
+
+#+END_SRC
+
+* Completion
+
+#+BEGIN_SRC emacs-lisp
+
+;; ==============================================================================
+;; 4. CORFU (COMPLETION UI OVERLAY)
+;; ==============================================================================
+(use-package corfu
+  :ensure t
+  ;; Optional: Enable Corfu globally
+  :init
+  (global-corfu-mode 1)
+  :custom
+  (corfu-auto t)                 ;; Enable auto-completion popups
+  (corfu-auto-delay 0.1)         ;; Show popup almost instantly
+  (corfu-auto-prefix 1)          ;; Show popup after typing just 1 character
+  (corfu-quit-no-match 'separator) ;; Aggressively close popup if no match found
+
+  ;; Optional: Enable Corfu in the minibuffer / Eshell if desired
+  :bind
+  (:map corfu-map
+        ("SPC" . corfu-insert-separator) ;; Allows filtering by spaces (orderless)
+        ("<escape>" . corfu-quit)))
+
+;; ==============================================================================
+;; 5. CAPE (COMPLETION BACKENDS EXTENSION)
+;; ==============================================================================
+(use-package cape
+  :ensure t
+  :init
+  ;; Add useful backends to the global completion-at-point list
+  ;; Eglot automatically adds its own backend, so these complement it!
+  (add-to-list 'completion-at-point-functions #'cape-file)      ;; Complete file paths
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)   ;; Complete words seen in open buffers
+  (add-to-list 'completion-at-point-functions #'cape-keyword))  ;; Complete programming language keywords
+
+
 #+END_SRC

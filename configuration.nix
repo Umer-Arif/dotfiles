@@ -21,8 +21,15 @@
   boot.kernelModules = [ "uinput" ];
   hardware.uinput.enable = true;
 
+  # Networking configuration
   networking.hostName = "nixos"; # Define your hostname.
   networking.networkmanager.enable = true; # Enable networking
+
+  # Enable Bluetooth support hardware layer
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true; # Powers up the controller immediately upon system startup
+  };
 
   # Set your time zone.
   time.timeZone = "Asia/Karachi";
@@ -42,9 +49,7 @@
   };
 
   # Enable the X11 windowing system & KDE Plasma Desktop
-  services.xserver.enable = true;
-  services.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
+  services.xserver.enable = false;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -63,26 +68,49 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    # Add this line to manage audio routing properly
+    wireplumber.enable = true; 
   };
 
+  # Enable the Syncthing system service
+ services.syncthing = {
+    enable = true;
+    user = "omer";
+    dataDir = "/home/omer";
+    configDir = "/home/omer/.config/syncthing";
+    openDefaultPorts = true;
+    overrideDevices = false;
+    overrideFolders = false;
+  };
+
+
+  # systemd service configuration for Syncthing
+   systemd.services.syncthing.wantedBy = pkgs.lib.mkForce [ ];
+ 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users."sama" = {
+   users.users."omer" = {
     isNormalUser = true;
-    description = "omer";
-    group = "sama";
+    description = "omer-sama";
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-      kdePackages.kate
-    ];
   };
 
-  users.groups.sama = {};
+  # Define a user group for the user account.
+  users.groups.omer = {};
 
   # Install firefox.
   programs.firefox.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+
+  # Install Niri
+  programs.niri.enable = true ;
+
+  # Install the hyprlock package
+  programs.hyprlock.enable = true;
+
+  # Require PAM authentication for hyprlock to safely verify your password
+  security.pam.services.hyprlock = {};
 
   # List packages installed in system profile.
   environment.systemPackages = with pkgs; [
@@ -96,21 +124,126 @@
     fastfetch
     aria2
     yt-dlp
-    emacs
-    stow
+    pkgs.emacs-pgtk
+	  waybar
+	  fuzzel
+	  xwayland-satellite
+	  mako          
+    wl-clipboard
+    blueman
+    kdePackages.ark        
+	  neovim     
+	  gnumake    
+    gcc       
+	  pkgs.awww
+    pkgs.home-manager
+    arc-theme
+    papirus-icon-theme
+    bibata-cursors
+    thunar                 
+    thunar-volman           
+    tumbler
+    vscode
+    pavucontrol
+    blueman
+    networkmanagerapplet
+    loupe
+    zathura
+    pkgs.kooha
   ];
 
-  # Fonts configuration
+    # Make sure everything is enclosed inside fonts = { ... };
   fonts = {
     packages = with pkgs; [
-      iosevka
+      iosevka-bin
+      inter
+      noto-fonts
+      font-awesome
+      nerd-fonts.symbols-only
+      nerd-fonts.jetbrains-mono
     ];
-    fontconfig.defaultFonts = {
-      monospace = [ "Iosevka" ];
+
+    # This MUST be inside fonts, not floating on its own
+    fontconfig = {
+      enable = true;
+      antialias = true;
+
+      defaultFonts = {
+        monospace = [ "Iosevka" ];
+        sansSerif = [ "Inter" ];
+        serif     = [ "Noto Serif" ];
+      };
+
+      hinting = {
+        enable = true;
+        style = "slight";
+      };
+
+      subpixel = {
+        rgba = "rgb";
+        lcdfilter = "default";
+      };
+    }; # End of fontconfig
+  }; # End of fonts
+
+  # Enable xdg-desktop-portal and configure it to use GTK for file chooser dialogs
+xdg.portal = {
+  enable = true;
+  # Add the lightweight gnome portal alongside your current gtk one
+  extraPortals = [ pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal-gnome ];
+
+  config = {
+    common = {
+      default = [ "gtk" ];
+    };
+    # Add this fallback so Niri knows where to look for screencasting
+    niri = {
+      default = [ "gnome" "gtk" ];
     };
   };
+};
 
-  # Kanata service setup (with the process-unmapped-keys fix inside defcfg)
+
+   # zsh shell configuration
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true; 
+
+    # Clean double-quoted string completely eliminates the "unmatched '" bug
+    promptInit = ''
+      # 1. Force your custom star symbol fallback
+      PROMPT_SYMBOL="✨" 
+
+      # 2. Force the full path to show while omitting the Git metadata
+      # The ''$ tells Nix to output a literal $ symbol into /etc/zshrc
+      PROMPT=''${PROMPT_SYMBOL:-"✨"}' %{$fg_bold[cyan]%}%~%{$reset_color%} '
+    '';
+
+    # Declarative Oh My Zsh Framework Settings
+    ohMyZsh = {
+      enable = true;
+      theme = "robbyrussell";  
+      plugins = [ "git" "sudo" "colored-man-pages" ]; 
+    };
+
+    autosuggestions.enable = true; 
+    syntaxHighlighting.enable = true; 
+  };
+
+  
+  # Dconf
+  programs.dconf.enable = true;
+
+  # Set Zsh as the default shell for your user
+  users.users.omer.shell = pkgs.zsh;
+
+  # Enable GVfs service for mounting internal storage networks
+  services.gvfs.enable = true;
+
+  # Add hardware registration definitions for phone USB connections
+  services.udev.packages = [ pkgs.libmtp ];
+
+
   # Kanata service setup
   services.kanata = {
     enable = true;
@@ -122,7 +255,7 @@
             caps
           )
           (defalias
-            capsec (tap-hold 200 200 esc lctl)
+            capsec (tap-hold 100 100 esc lctl)
           )
           (deflayer default
             @capsec

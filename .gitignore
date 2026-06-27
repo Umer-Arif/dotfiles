@@ -1,0 +1,6 @@
+hardware-configuration.nix
+# Ignore everything inside the emacs folder...
+/emacs/*
+
+# ...EXCEPT for init.org
+!/emacs/init.org

@@ -2,7 +2,9 @@
 spawn-at-startup "awww-daemon"
 spawn-at-startup "waybar"
 spawn-at-startup "mako"
-spawn-at-startup "/home/omer/.cargo/bin/niri-switch-daemon"
+spawn-at-startup "dbus-update-activation-environment" "--systemd" "DISPLAY" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP=niri"
+spawn-at-startup "systemctl" "--user" "import-environment" "DISPLAY" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
+
 
 hotkey-overlay {
     skip-at-startup
@@ -176,7 +178,7 @@ layout {
         // - CSS-like notation: "rgb(255, 127, 0)", rgba(), hsl() and a few others.
 
         // Color of the ring on the active monitor.
-        active-color "#F4D659FF"
+        active-color "rgb(148, 89, 244)"
 
         // Color of the ring on inactive monitors.
         inactive-color "#005D3BFF"
@@ -276,7 +278,6 @@ window-rule {
 }
 	
 
-
 // Emacs
 window-rule {
     match app-id="^emacs$"
@@ -287,16 +288,10 @@ window-rule {
     }
 }
 
-// Kitty terminal (opacity only, no blur unless you want to add it)
-window-rule {
-    match app-id="kitty"
-    opacity 1.0
-    draw-border-with-background false
-}
 
 // Sioyek PDF viewer
 window-rule {
-    match app-id="sioyek"
+    match app-id="zathura"
     opacity 0.7
     draw-border-with-background false
     
@@ -306,12 +301,6 @@ window-rule {
     }
 }
 
-// Niri switcher
-window-rule {
-    match app-id="niriswitcher"
-    opacity 0.7
-    draw-border-with-background false
-}
 layer-rule {
     match namespace="^launcher$"
     
@@ -390,18 +379,14 @@ binds {
     Mod+E hotkey-overlay-title="Run an Application: emacs" { spawn "emacs"; }
     Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
 	Mod+B hotkey-overlay-title="Run an Application: firefox" { spawn "firefox"; }
-    Mod+N hotkey-overlay-title="Run an Application: nemo" { spawn "nemo"; }
-    Mod+Shift+Q hotkey-overlay-title="Open powermenu: powermenu" { spawn "~/.local/bin/powermenu.zsh"; }
-    Mod+Shift+C hotkey-overlay-title="Run Application: Chatbox" { spawn "/home/omer/.local/bin/Chatbox-1.20.3-x86_64.AppImage"; }
-	Alt+Tab repeat=false { spawn "/home/omer/.cargo/bin/niri-switch"; }
-    Alt+Shift+Tab repeat=false { spawn "/home/omer/.cargo/bin/niri-switch" "show" "--workspace"; }
+    Mod+T hotkey-overlay-title="Run an Application: thunar" { spawn "thunar"; }
 	Mod+Shift+B hotkey-overlay-title="Increase Brightness" { spawn "brightnessctl set +5%"; }
 	Mod+Alt+B   hotkey-overlay-title="Decrease Brightness" { spawn "brightnessctl set 5%-"; }
 	Mod+Ctrl+B  hotkey-overlay-title="Set Brightness 90%"  { spawn "brightnessctl set 90%"; }
 	Mod+Alt+R hotkey-overlay-title="Emoji Picker: rofimoji" { spawn "rofimoji" "--selector" "fuzzel" "--typer" "wtype"; }
 
 
-	Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "hyprlock"; }
+	Super+Alt+L hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument in the end.

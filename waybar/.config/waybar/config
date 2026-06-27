@@ -6,11 +6,22 @@
     "margin-left": 10,
     "margin-right": 10,
     "spacing": 5,
-
-    "modules-left": ["niri/workspaces", "niri/window"],
-    "modules-center": ["clock"],
-    "modules-right": ["pulseaudio", "network", "cpu", "memory", "battery", "tray"],
-
+    "modules-left": [
+        "niri/workspaces",
+        "niri/window"
+    ],
+    "modules-center": [
+        "clock"
+    ],
+    "modules-right": [
+        "pulseaudio",
+        "cpu",
+        "memory",
+        "battery",
+        "tray",
+        "custom/reboot",
+        "custom/shutdown"
+    ],
     "niri/workspaces": {
         "format": "{icon}",
         "format-icons": {
@@ -18,35 +29,71 @@
             "focused": "●"
         }
     },
-
     "niri/window": {
-        "format": "󰖲 {title}",
+        "format": "   {title}",
         "max-length": 35,
-        "rewrite": { "": "Niri Desktop" }
+        "rewrite": {
+            "": "Niri Desktop"
+        }
     },
-
     "clock": {
         "format": "{:%d-%b-%a | %I:%M %p}",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
     },
-
     "battery": {
-        "states": { "warning": 30, "critical": 15 },
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
         "format": "{capacity}% {icon}",
         "format-charging": "{capacity}% 󱐋",
-        "format-full": "{capacity}% 󰁹",
-        "format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+        "format-full": "{capacity}% {icon}",
+        "format-icons": [
+            "󰂎",
+            "󰁺",
+            "󰁻",
+            "󰁼",
+            "󰁽",
+            "󰁾",
+            "󰁿",
+            "󰂀",
+            "󰂁", // <-- This is the battery shape (your 1st image)
+            "󰂂",
+            "󰁹"
+        ],
         "interval": 2
     },
-
     "pulseaudio": {
         "format": "{volume}% {icon}",
-        "format-muted": "󰝟",
-        "format-icons": { "default": ["󰕿", "󰖀", "󰕾"] }
+        "format-muted": "󰖁",
+        "format-icons": {
+            "default": [
+                "󰕿", // Low volume (0-33%)
+                "󰖀", // Medium volume (34-66%)
+                "󰕾" // High volume (67-100%)
+            ]
+        },
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "on-click-right": "pavucontrol"
     },
-
-    "cpu": { "format": "{usage}% " },
-    "memory": { "format": "{}% " },
-    "network": { "format-wifi": "{signalStrength}% ", "format-ethernet": "󰈀" },
-    "tray": { "icon-size": 16, "spacing": 10 }
+    "cpu": {
+        "format": "{usage}% "
+    },
+    "memory": {
+        "format": "{}% "
+    },
+    "tray": {
+        "icon-size": 16,
+        "spacing": 10
+    },
+    "custom/reboot": {
+        "format": "↻",
+        "tooltip-format": "Reboot System",
+        "on-click": "systemctl reboot"
+    },
+    "custom/shutdown": {
+        "format": "",
+        "tooltip-format": "Shutdown System",
+        "on-click": "systemctl poweroff"
+    }
 }

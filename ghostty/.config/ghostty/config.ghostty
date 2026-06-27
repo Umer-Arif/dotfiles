@@ -1,7 +1,14 @@
 # Font Settings
 font-family = "Iosevka"
 font-size = 14
-font-style = "italic"
+#font-style = ""
+
+cursor-style = block
+cursor-style-blink = true
+
+# This prevents the shell from telling Ghostty to use a line cursor
+shell-integration-features = no-cursor
+
 
 # Appearance
 background-opacity = 0.9
@@ -16,6 +23,5 @@ keybind = ctrl+v=paste_from_clipboard
 # Maps Ctrl+Shift+C to stop commands (SIGINT)
 keybind = ctrl+shift+c=text:\x03
 
-theme = "Belafonte Night"
-
+theme = "Birds Of Paradise"
 keybind = f11=toggle_fullscreen
