@@ -53,11 +53,10 @@ gtk = {
     package = pkgs.papirus-icon-theme;
   };
   cursorTheme = {
-    name = "Bibata-Modern-Ice";
+    name = "Bibata-Modern-Classic";
     package = pkgs.bibata-cursors;
   };
 };
-
 
 
   programs.firefox = {

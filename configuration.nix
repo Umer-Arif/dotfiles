@@ -186,7 +186,7 @@
     }; # End of fontconfig
   }; # End of fonts
 
-  # Enable xdg-desktop-portal and configure it to use GTK for file chooser dialogs
+# Enable xdg-desktop-portal and configure it to use GTK for file chooser dialogs
 xdg.portal = {
   enable = true;
   # Add the lightweight gnome portal alongside your current gtk one
@@ -196,12 +196,15 @@ xdg.portal = {
     common = {
       default = [ "gtk" ];
     };
-    # Add this fallback so Niri knows where to look for screencasting
+    # Route screencasting directly to GNOME so Kooha can capture the screen
     niri = {
-      default = [ "gnome" "gtk" ];
+      default = [ "gtk" ];
+      "org.freedesktop.impl.portal.ScreenCast" = [ "gnome" ];
+      "org.freedesktop.impl.portal.Screenshot" = [ "gnome" ];
     };
   };
 };
+
 
 
    # zsh shell configuration

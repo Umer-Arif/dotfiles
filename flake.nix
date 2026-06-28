@@ -13,7 +13,7 @@
   outputs = { self, nixpkgs, home-manager, ... }@inputs: {
     nixosConfigurations = {
       # Matches your computer's hostname
-      sama = nixpkgs.lib.nixosSystem {
+      omer = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           ./hardware-configuration.nix
@@ -27,7 +27,7 @@
             home-manager.useUserPackages = true;
 
             # Map Home Manager configuration strictly to your REAL username
-            home-manager.users.sama = import ./home.nix;
+            home-manager.users.omer = import ./home.nix;
           }
         ];
       };
