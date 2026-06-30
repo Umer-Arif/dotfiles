@@ -42,7 +42,7 @@
 
   (add-hook 'focus-out-hook #'me/garbage-collect-maybe)  ; Run garbage collection when you leave the Emacs window
 
-  (add-to-list 'default-frame-alist '(alpha-background . 0.9))  ; Make frame 70% transparent (0 = fully transparent, 1 = opaque)
+ (add-to-list 'default-frame-alist '(alpha-background . 0.9))  ; Make frame 70% transparent (0 = fully transparent, 1 = opaque)
 
   ;; Allow this project variable to be set without asking for confirmation each time
   (add-to-list 'safe-local-variable-values
@@ -106,7 +106,7 @@
 
 
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/t2-vscode")
-  (load-theme 'omer-tokyo-night)
+  (load-theme 'omer-aura-dracula-spirit)
 
 
 #+END_SRC
@@ -342,114 +342,131 @@
 * Packages
 #+BEGIN_SRC emacs-lisp
 
+    (use-package goto-line-preview
+            :ensure t
+            :bind ("C-x C-j" . 'goto-line-preview))
 
-        (use-package goto-line-preview
+          (use-package sudo-edit
+            :ensure t)
+
+          (put 'dired-find-alternate-file 'disabled nil)
+
+          (use-package savehist
+            :init
+            (savehist-mode 1))
+
+          (use-package vertico
+            :ensure t
+            :init
+            (vertico-mode)
+            (setq vertico-cycle t)
+            :config
+            (setq vertico-sort-function #'vertico-sort-history-alpha))
+
+          (use-package marginalia
+            :ensure t
+            :config
+            (marginalia-mode))
+
+          (use-package orderless
+            :ensure t
+            :config
+            (setq completion-styles '(orderless basic)))
+
+          (use-package all-the-icons
+            :if (display-graphic-p)
+            :ensure t)
+
+          (use-package all-the-icons-dired
+            :ensure t
+            :hook (dired-mode . all-the-icons-dired-mode))
+
+          (use-package all-the-icons-completion
+            :ensure t
+            :after (marginalia all-the-icons)
+            :init
+            (all-the-icons-completion-mode))
+
+          (use-package rainbow-delimiters
+            :ensure t
+            :hook (prog-mode . rainbow-delimiters-mode))
+
+          (use-package smartparens
+            :ensure t
+            :hook ((prog-mode . smartparens-mode)
+                   (org-mode . smartparens-mode)))
+
+
+          (use-package undo-tree
+            :ensure t
+            :custom
+            (undo-tree-auto-save-history t)
+            (undo-tree-history-directory-alist
+             `((".*" . ,(expand-file-name "undo/" user-emacs-directory))))
+            :config
+            (make-directory (expand-file-name "undo/" user-emacs-directory) t)
+            (global-undo-tree-mode))
+
+
+          (use-package ligature
+            :ensure t
+            :config
+            (ligature-set-ligatures 't '("www"))
+            (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+            (ligature-set-ligatures 'prog-mode '("-<<" "-<" "-<-" "<--" "<---" "<<-" "<-" "->" "->>" "-->" "--->" "->-" ">-" ">>-"
+                                                 "=<<" "=<" "=<=" "<==" "<===" "<<=" "<=" "=>" "=>>" "==>" "===>" "=>=" ">=" ">>="
+                                                 "<->" "<-->" "<--->" "<---->" "<=>" "<==>" "<===>" "<====>" "::" ":::" "__"
+                                                 "<~~" "</" "</>" "/>" "~~>" "==" "!=" "/=" "~=" "<>" "===" "!==" "!===" "=/=" "=!="
+                                                 "<:" ":=" "*=" "*+" "<*" "<*>" "*>" "<|" "<|>" "|>" "<." "<.>" ".>" "+*" "=*" "=:"
+                                                 ":>" "(*" "*)" "/*" "*/" "[|" "|]" "{|" "|}" "++" "+++" "\\/" "/\\" "|-" "-|" "<!--" "<!---"))
+            (global-ligature-mode))
+
+
+          (use-package transient
+            :ensure t)
+
+          (use-package markdown-mode
           :ensure t
-          :bind ("C-x C-j" . 'goto-line-preview))
+          :mode ("README\\.md\\'" . gfm-mode)
+          :init (setq markdown-command "multimarkdown"))
 
-        (use-package sudo-edit
-          :ensure t)
+          (use-package indent-bars
+            :ensure t
+            :hook (prog-mode . indent-bars-mode)
+            :custom
+            (indent-bars-starting-column 0))
 
-        (put 'dired-find-alternate-file 'disabled nil)
+          (use-package kind-icon
+            :ensure t
+            :after corfu
+            :custom
+            (kind-icon-blend-background t)
+            (kind-icon-default-face 'corfu-default) ; only needed with blend-background
+            :config
+            (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
-        (use-package savehist
-          :init
-          (savehist-mode 1))
+          (use-package magit
+            :ensure t)
 
-        (use-package vertico
-          :ensure t
-          :init
-          (vertico-mode)
-          (setq vertico-cycle t)
-          :config
-          (setq vertico-sort-function #'vertico-sort-history-alpha))
+    ; 1. Install and configure nix-mode for syntax highlighting
+  (use-package nix-mode
+    :ensure t
+    :mode "\\.nix\\'"             ; Auto-enable for .nix files
+    :hook (nix-mode . eglot-ensure) ; Auto-start LSP when opening a .nix file
+    :config
+    ;; 2. Tell Eglot to use 'nil' as the language server for nix-mode
+    (add-to-list 'eglot-server-programs '(nix-mode . ("nil"))))
 
-        (use-package marginalia
-          :ensure t
-          :config
-          (marginalia-mode))
-
-        (use-package orderless
-          :ensure t
-          :config
-          (setq completion-styles '(orderless basic)))
-
-        (use-package all-the-icons
-          :if (display-graphic-p)
-          :ensure t)
-
-        (use-package all-the-icons-dired
-          :ensure t
-          :hook (dired-mode . all-the-icons-dired-mode))
-
-        (use-package all-the-icons-completion
-          :ensure t
-          :after (marginalia all-the-icons)
-          :init
-          (all-the-icons-completion-mode))
-
-        (use-package rainbow-delimiters
-          :ensure t
-          :hook (prog-mode . rainbow-delimiters-mode))
-
-        (use-package smartparens
-          :ensure t
-          :hook ((prog-mode . smartparens-mode)
-                 (org-mode . smartparens-mode)))
+  ;; Optional but highly recommended: Auto-formatting on save
+  (use-package apheleia
+    :ensure t
+    :config
+    ;; Use nixfmt or alejandra (whichever you prefer, nixfmt is standard)
+    (setf (alist-get 'nix-mode apheleia-mode-alist) 'nixfmt))
 
 
-        (use-package undo-tree
-          :ensure t
-          :custom
-          (undo-tree-auto-save-history t)
-          (undo-tree-history-directory-alist
-           `((".*" . ,(expand-file-name "undo/" user-emacs-directory))))
-          :config
-          (make-directory (expand-file-name "undo/" user-emacs-directory) t)
-          (global-undo-tree-mode))
 
-
-        (use-package ligature
-          :ensure t
-          :config
-          (ligature-set-ligatures 't '("www"))
-          (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
-          (ligature-set-ligatures 'prog-mode '("-<<" "-<" "-<-" "<--" "<---" "<<-" "<-" "->" "->>" "-->" "--->" "->-" ">-" ">>-"
-                                               "=<<" "=<" "=<=" "<==" "<===" "<<=" "<=" "=>" "=>>" "==>" "===>" "=>=" ">=" ">>="
-                                               "<->" "<-->" "<--->" "<---->" "<=>" "<==>" "<===>" "<====>" "::" ":::" "__"
-                                               "<~~" "</" "</>" "/>" "~~>" "==" "!=" "/=" "~=" "<>" "===" "!==" "!===" "=/=" "=!="
-                                               "<:" ":=" "*=" "*+" "<*" "<*>" "*>" "<|" "<|>" "|>" "<." "<.>" ".>" "+*" "=*" "=:"
-                                               ":>" "(*" "*)" "/*" "*/" "[|" "|]" "{|" "|}" "++" "+++" "\\/" "/\\" "|-" "-|" "<!--" "<!---"))
-          (global-ligature-mode))
-
-
-        (use-package transient
-          :ensure t)
-
-        (use-package markdown-mode
-        :ensure t
-        :mode ("README\\.md\\'" . gfm-mode)
-        :init (setq markdown-command "multimarkdown"))
-
-        (use-package indent-bars
-          :ensure t
-          :hook (prog-mode . indent-bars-mode)
-          :custom
-          (indent-bars-starting-column 0))
-
-        (use-package kind-icon
-          :ensure t
-          :after corfu
-          :custom
-          (kind-icon-blend-background t)
-          (kind-icon-default-face 'corfu-default) ; only needed with blend-background
-          :config
-          (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
-
-        (use-package magit
-          :ensure t)
-
-        (elpaca-process-queues)
+          (elpaca-process-queues)
 
 
 #+END_SRC

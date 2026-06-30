@@ -1,0 +1,40 @@
+# Zathura configuration
+set confirm-quit false
+set scroll-step 1
+set page-padding 20
+set recolor true
+set recolor-keephue false
+set recolor-darkcolor "#fffafa"
+set recolor-lightcolor "#1a1a25"
+set search-highlight true
+set synctex true
+
+# Default is 40. Higher values make scrolling significantly faster.
+set scroll-step 120
+
+
+# Scroll up / down (Line by line using Vim keys)
+map j scroll down
+map k scroll up
+
+# Page up / down (Half-page or Full-page Vim style)
+map <A-e> scroll half-down
+map <A-a> scroll half-up
+map <C-f> scroll page-down
+map <C-b> scroll page-up
+
+# Top / Bottom of document
+map <C-a> goto top
+map <C-e> goto bottom
+
+# Copy to clipboard automatically on mouse selection
+set selection-clipboard clipboard
+
+# Hide bottom status bar (Shows automatically when pressing ':')
+set statusbar-home-tilde true
+set guioptions ""
+
+# Zoom in / out
+map + zoom in
+map - zoom out
+map = zoom in

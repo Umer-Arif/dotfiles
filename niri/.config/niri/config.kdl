@@ -167,10 +167,9 @@ layout {
     // You can change how the focus ring looks.
     focus-ring {
         // Uncomment this line to disable the focus ring.
-        // off
-
+        /// off
         // How many logical pixels the ring extends out from the windows.
-        width 3
+        width 2
 
         // Colors can be set in a variety of ways:
         // - CSS named colors: "red"
@@ -178,10 +177,10 @@ layout {
         // - CSS-like notation: "rgb(255, 127, 0)", rgba(), hsl() and a few others.
 
         // Color of the ring on the active monitor.
-        active-color "rgb(148, 89, 244)"
+        active-color "rgb(248, 251, 178)"
 
         // Color of the ring on inactive monitors.
-        inactive-color "#005D3BFF"
+        inactive-color "rgb(54, 163, 123)"
 
         // You can also use gradients. They take precedence over solid colors.
         // Gradients are rendered the same as CSS linear-gradient(angle, from, to).
@@ -190,13 +189,13 @@ layout {
         // You can use any CSS linear-gradient tool on the web to set these up.
         // Changing the color space is also supported, check the wiki for more info.
         //
-        // active-gradient from="#1fa5e4ff" to="#d8dba4ff" angle=60
+        // active-gradient from="rgb(230, 232, 185)" to="rgb(185, 209, 212)" angle=60
 
         // You can also color the gradient relative to the entire view
         // of the workspace, rather than relative to just the window itself.
         // To do that, set relative-to="workspace-view".
         //
-        // inactive-gradient from="#505050" to="#808080" angle=45 relative-to="workspace-view"
+    // inactive-gradient from="#505050" to="#808080" angle=45 relative-to="workspace-view"
     }
 
     //You can also add a border. It's similar to the focus ring, but always visible.
@@ -279,14 +278,14 @@ window-rule {
 	
 
 // Emacs
-window-rule {
+ window-rule {
     match app-id="^emacs$"
-    opacity 1.0
-    draw-border-with-background false
-    background-effect {
-        blur true
-    }
-}
+     opacity 0.8
+     draw-border-with-background false
+      background-effect {
+           blur true
+     }
+ }
 
 
 // Sioyek PDF viewer

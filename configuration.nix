@@ -232,6 +232,12 @@ xdg.portal = {
     syntaxHighlighting.enable = true; 
   };
 
+     # Add to home.nix:
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
+
   
   # Dconf
   programs.dconf.enable = true;

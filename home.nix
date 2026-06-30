@@ -11,35 +11,43 @@
     # Add your personal CLI tools here later!
   ];
 
-  home.file = {
+ home.file = {
     ".emacs.d".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/emacs/.emacs.d";
-    ".config/ghostty".source = ./ghostty/.config/ghostty;
-    ".config/mpv".source = ./mpv/.config/mpv;
-    ".config/nvim".source = ./nvim/.config/nvim;
-    ".config/waybar".source = ./waybar/.config/waybar;
-    ".config/mako".source = ./mako/.config/mako;
-    ".config/fuzzel".source = ./fuzzel/.config/fuzzel;
-    ".config/niri".source = ./niri/.config/niri;
-    ".config/hypr".source = ./hypr/.config/hypr;
-  };
+    
+    ".config/ghostty".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/ghostty/.config/ghostty";
+    
+    ".config/mpv".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/mpv/.config/mpv";
+    
+    ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/nvim/.config/nvim";
+    
+    ".config/waybar".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/waybar/.config/waybar";
+    
+    ".config/mako".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/mako/.config/mako";
+    
+    ".config/fuzzel".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/fuzzel/.config/fuzzel";
+    
+    ".config/niri".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/niri/.config/niri";
+    
+    ".config/hypr".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/hypr/.config/hypr";
+    
+    ".config/zathura".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/zathura/.config/zathura";
+};
 
-  programs.emacs = {
+  
+ programs.emacs = {
     enable = true;
-    package = pkgs.emacs; # No more custom symlinkJoin wrapper!
+    # Bug Fix: Changed from pkgs.emacs to pkgs.emacs-pgtk
+    package = pkgs.emacs-pgtk; 
 
     extraPackages = epkgs: [
       epkgs.treesit-grammars.with-all-grammars
       epkgs.envrc       
     ];
-  };
-
-
-  # Add to home.nix:
-programs.direnv = {
-  enable = true;
-  nix-direnv.enable = true;
 };
 
+
+
+ 
   gtk = {
     enable = true;
     theme = {
