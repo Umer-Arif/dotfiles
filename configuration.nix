@@ -97,9 +97,6 @@
   # Define a user group for the user account.
   users.groups.omer = {};
 
-  # Install firefox.
-  programs.firefox.enable = true;
-
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -150,6 +147,7 @@
     loupe
     zathura
     pkgs.kooha
+    firefox
   ];
 
     # Make sure everything is enclosed inside fonts = { ... };
@@ -198,7 +196,8 @@ xdg.portal = {
     };
     # Route screencasting directly to GNOME so Kooha can capture the screen
     niri = {
-      default = [ "gtk" ];
+      # Use pkgs.lib.mkForce here to override the niri module's built-in default
+      default = pkgs.lib.mkForce [ "gtk" ];
       "org.freedesktop.impl.portal.ScreenCast" = [ "gnome" ];
       "org.freedesktop.impl.portal.Screenshot" = [ "gnome" ];
     };
@@ -258,7 +257,7 @@ xdg.portal = {
             caps
           )
           (defalias
-            capsec (tap-hold 100 100 esc lctl)
+            capsec (tap-hold 200 100 esc lctl)
           )
           (deflayer default
             @capsec
