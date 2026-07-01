@@ -118,7 +118,7 @@
     kdePackages.kdenlive
     rclone
     syncthing
-    fastfetch
+    pkgs.fastfetch
     aria2
     yt-dlp
     pkgs.emacs-pgtk
@@ -146,8 +146,8 @@
     networkmanagerapplet
     loupe
     zathura
-    pkgs.kooha
     firefox
+    brightnessctl
   ];
 
     # Make sure everything is enclosed inside fonts = { ... };

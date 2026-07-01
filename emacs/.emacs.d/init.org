@@ -464,7 +464,8 @@
     ;; Use nixfmt or alejandra (whichever you prefer, nixfmt is standard)
     (setf (alist-get 'nix-mode apheleia-mode-alist) 'nixfmt))
 
-
+  (use-package vterm
+  :ensure t)
 
           (elpaca-process-queues)
 

@@ -9,6 +9,9 @@
 
   home.packages = with pkgs; [
     # Add your personal CLI tools here later!
+    cmake
+    pkg-config
+    gcc
   ];
 
  home.file = {
@@ -41,10 +44,74 @@
 
     extraPackages = epkgs: [
       epkgs.treesit-grammars.with-all-grammars
-      epkgs.envrc       
+      epkgs.envrc   
+      epkgs.vterm    
     ];
 };
 
+programs.fastfetch = {
+  enable = true;
+  settings = {
+    logo = {
+      type = "small";
+    };
+    display = {
+      separator = "  ";
+    };
+    modules = [
+      {
+        type = "title";
+        key = "  user ";
+        keyColor = "31";
+      }
+      {
+        type = "host";
+        key = "    hname";
+        keyColor = "32";
+      }
+      {
+        type = "uptime";
+        key = "    uptime";
+        keyColor = "33";
+      }
+      {
+        type = "os";
+        key = "    distro";
+        keyColor = "34";
+      }
+      {
+        type = "kernel";
+        key = "    kernel";
+        keyColor = "35";
+      }
+      {
+        type = "terminal";
+        key = "  term  ";
+        keyColor = "36";
+      }
+      {
+        type = "shell";
+        key = "  shell ";
+        keyColor = "37";
+      }
+      {
+        type = "cpu";
+        key = "  cpu   ";
+        keyColor = "34";
+      }
+      {
+        type = "disk";
+        key = "    disk  ";
+        keyColor = "35";
+      }
+      {
+        type = "memory";
+        key = "  memory";
+        keyColor = "36";
+      }
+    ];
+  };
+};
 
 
  
