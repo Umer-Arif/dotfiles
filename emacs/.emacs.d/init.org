@@ -23,72 +23,73 @@
 
 
 #+END_SRC
+
 * UI
 #+BEGIN_SRC emacs-lisp
+
   (setq-default inhibit-startup-message t    ; Don't show splash screen
-                visible-bell t                      ; Flash on errors
-                fill-column 100                     ; Wrap at 100 chars
-                tab-width 4                         ; Tab width
-                initial-scratch-message ";; WELCOME TO EMACS! \n\n")
+                 visible-bell t                      ; Flash on errors
+                 fill-column 100                     ; Wrap at 100 chars
+                 tab-width 4                         ; Tab width
+                 initial-scratch-message ";; WELCOME TO EMACS! \n\n")
 
-  (menu-bar-mode -1)       ; Turn off the menu bar at top of window (File, Edit, Options, etc.)
-  (tool-bar-mode -1)       ; Turn off the toolbar with icons (save, undo, cut, copy, paste)
-  (scroll-bar-mode -1)     ; Turn off the scroll bar on the side of the window
-  (fset 'yes-or-no-p 'y-or-n-p)  ; Replace "yes/no" prompts with shorter "y/n" prompts
-  (delete-selection-mode 1)      ; When you type, replace selected text instead of inserting before it
+   (menu-bar-mode -1)       ; Turn off the menu bar at top of window (File, Edit, Options, etc.)
+   (tool-bar-mode -1)       ; Turn off the toolbar with icons (save, undo, cut, copy, paste)
+   (scroll-bar-mode -1)     ; Turn off the scroll bar on the side of the window
+   (fset 'yes-or-no-p 'y-or-n-p)  ; Replace "yes/no" prompts with shorter "y/n" prompts
+   (delete-selection-mode 1)      ; When you type, replace selected text instead of inserting before it
 
-  (defun me/garbage-collect-maybe ()
-    (garbage-collect))  ; Force Emacs to free up unused memory
+   (defun me/garbage-collect-maybe ()
+     (garbage-collect))  ; Force Emacs to free up unused memory
 
-  (add-hook 'focus-out-hook #'me/garbage-collect-maybe)  ; Run garbage collection when you leave the Emacs window
+   (add-hook 'focus-out-hook #'me/garbage-collect-maybe)  ; Run garbage collection when you leave the Emacs window
 
- (add-to-list 'default-frame-alist '(alpha-background . 0.9))  ; Make frame 70% transparent (0 = fully transparent, 1 = opaque)
+  (add-to-list 'default-frame-alist '(alpha-background . 0.9))  ; Make frame 70% transparent (0 = fully transparent, 1 = opaque)
 
-  ;; Allow this project variable to be set without asking for confirmation each time
-  (add-to-list 'safe-local-variable-values
-               '(before-save-hook . delete-trailing-whitespace))  ; Auto-trim trailing spaces when saving
+   ;; Allow this project variable to be set without asking for confirmation each time
+   (add-to-list 'safe-local-variable-values
+                '(before-save-hook . delete-trailing-whitespace))  ; Auto-trim trailing spaces when saving
 
-  ;; Remember cursor position in files when you reopen them
-  (save-place-mode 1)
+   ;; Remember cursor position in files when you reopen them
+   (save-place-mode 1)
 
-  ;; Keep cursor position even for files on USB drives or network shares
-  (setq save-place-forget-unreadable-files nil)
+   ;; Keep cursor position even for files on USB drives or network shares
+   (setq save-place-forget-unreadable-files nil)
 
-  ;; Store the cursor position data in a custom file inside Emacs config folder
-  (setq save-place-file (expand-file-name "places" user-emacs-directory))
+   ;; Store the cursor position data in a custom file inside Emacs config folder
+   (setq save-place-file (expand-file-name "places" user-emacs-directory))
 
-  ;; Update the saved cursor position immediately when you save a file
-  (add-hook 'after-save-hook 'save-place-to-alist)
+   ;; Update the saved cursor position immediately when you save a file
+   (add-hook 'after-save-hook 'save-place-to-alist)
 
-  ;; Line Numbers
-  (column-number-mode t)                     ; Show column number in mode line (e.g., "Col: 42")
-  (global-display-line-numbers-mode t)       ; Show line numbers for every buffer by default
-  (global-hl-line-mode 1)                    ; Highlight the current line with a background color
+   ;; Line Numbers
+   (column-number-mode t)                     ; Show column number in mode line (e.g., "Col: 42")
+   (global-display-line-numbers-mode t)       ; Show line numbers for every buffer by default
+   (global-hl-line-mode 1)                    ; Highlight the current line with a background color
 
-  (setq display-line-numbers-type 'relative) ; Show line numbers as distance from current line (e.g., 1, 1, current, 1, 2, 3...)
+   (setq display-line-numbers-type 'relative) ; Show line numbers as distance from current line (e.g., 1, 1, current, 1, 2, 3...)
 
-  ;; Turn off line numbers for terminal/shell buffers (they don't play well with prompt lines)
-  (dolist (mode '(org-mode-hook
-                  org-agenda-mode-hook
-                  term-mode-hook
-                  shell-mode-hook
-                  eshell-mode-hook
-                  vterm-mode-hook
-                  eat-mode))
-    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+   ;; Turn off line numbers for terminal/shell buffers (they don't play well with prompt lines)
+   (dolist (mode '(org-mode-hook
+                   org-agenda-mode-hook
+                   term-mode-hook
+                   shell-mode-hook
+                   eshell-mode-hook
+                   vterm-mode-hook
+                   eat-mode))
+     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-  ;; Force UTF-8 as the default everywhere
-  (set-language-environment "UTF-8")           ; Tell Emacs to use UTF-8 for language settings
-  (prefer-coding-system 'utf-8)                ; Prefer UTF-8 when reading/writing files
-  (set-selection-coding-system 'utf-8)         ; Use UTF-8 for copy/paste with system clipboard
-  (set-keyboard-coding-system 'utf-8)          ; Use UTF-8 for keyboard input
-  (setq default-buffer-file-coding-system 'utf-8-unix)  ; Save files as UTF-8 with Unix line endings
+   ;; Force UTF-8 as the default everywhere
+   (set-language-environment "UTF-8")           ; Tell Emacs to use UTF-8 for language settings
+   (prefer-coding-system 'utf-8)                ; Prefer UTF-8 when reading/writing files
+   (set-selection-coding-system 'utf-8)         ; Use UTF-8 for copy/paste with system clipboard
+   (set-keyboard-coding-system 'utf-8)          ; Use UTF-8 for keyboard input
+   (setq default-buffer-file-coding-system 'utf-8-unix)  ; Save files as UTF-8 with Unix line endings
 
-  ;;(setq-default cursor-type 'bar)  ;; thin vertical bar cursor (disabled, uncomment if wanted)
-  (blink-cursor-mode 1)               ; Make cursor blink (1 = on, -1 = off)
+   ;;(setq-default cursor-type 'bar)  ;; thin vertical bar cursor (disabled, uncomment if wanted)
+   (blink-cursor-mode 1)               ; Make cursor blink (1 = on, -1 = off)
 
 #+END_SRC
-
 ** Font
 #+BEGIN_SRC emacs-lisp
   (set-face-attribute 'default nil :font "Iosevka" :height 150)
@@ -99,22 +100,20 @@
 
   (setq async-shell-command-buffer "confirm-kill-process")  ; Ask before killing a running shell command when you close its buffer
 #+END_SRC
-
 * Themes
 #+BEGIN_SRC emacs-lisp
   (setq custom-safe-themes t)
 
 
-  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/t2-vscode")
-  (load-theme 'omer-aura-dracula-spirit)
+  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/t1-emacs-themes")
+  (load-theme 'omer-kaolin-dark)
 
 
 #+END_SRC
-
 * Package manager
 #+BEGIN_SRC emacs-lisp
 
-  (defvar elpaca-installer-version 0.12)
+    (defvar elpaca-installer-version 0.12)
   (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
   (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
   (defvar elpaca-sources-directory (expand-file-name "sources/" elpaca-directory))
@@ -154,8 +153,9 @@
   (elpaca `(,@elpaca-order))
 
   ;; Install use-package support
-  (elpaca elpaca-use-package
-    (elpaca-use-package-mode))
+(elpaca elpaca-use-package
+  ;; Enable use-package :ensure support for Elpaca.
+  (elpaca-use-package-mode))
 
 #+END_SRC
 
@@ -448,14 +448,8 @@
           (use-package magit
             :ensure t)
 
-    ; 1. Install and configure nix-mode for syntax highlighting
-  (use-package nix-mode
-    :ensure t
-    :mode "\\.nix\\'"             ; Auto-enable for .nix files
-    :hook (nix-mode . eglot-ensure) ; Auto-start LSP when opening a .nix file
-    :config
-    ;; 2. Tell Eglot to use 'nil' as the language server for nix-mode
-    (add-to-list 'eglot-server-programs '(nix-mode . ("nil"))))
+  (use-package nix-ts-mode
+    :ensure t)
 
   ;; Optional but highly recommended: Auto-formatting on save
   (use-package apheleia
@@ -682,6 +676,7 @@
           (tsx-mode        . tsx-ts-mode)
           (bash-mode       . bash-ts-mode)
           (c-mode          . c-ts-mode)
+  		(nix-mode        . nix-ts-mode)
           (c++-mode        . c++-ts-mode)))
 
   ;; Hard-map file extensions to guarantee they open in Tree-sitter mode
@@ -689,7 +684,7 @@
   (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
-
+  (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
 
   ;; ==============================================================================
   ;; 2. REGISTER LANGUAGE SERVERS IN EGLOT
@@ -702,6 +697,9 @@
     ;; Register Python
     (add-to-list 'eglot-server-programs
                  '(python-ts-mode . ("pyright-langserver" "--stdio")))
+
+    (add-to-list 'eglot-server-programs
+             '(nix-ts-mode . ("nil")))
 
     ;; Register TypeScript & TSX
     (add-to-list 'eglot-server-programs
@@ -728,6 +726,7 @@
                         ((derived-mode-p 'rust-ts-mode) "rust-analyzer")
                         ((derived-mode-p 'python-ts-mode) "pyright-langserver")
                         ((derived-mode-p 'typescript-ts-mode) "typescript-language-server")
+  					  ((derived-mode-p 'nix-ts-mode) "nil")
                         ((derived-mode-p 'tsx-ts-mode) "typescript-language-server"))))
       (when binary-name
         (my/auto-start-eglot-when-path-ready (current-buffer) binary-name))))
@@ -737,7 +736,7 @@
   (add-hook 'python-ts-mode-hook     #'my/trigger-nix-eglot-sequence)
   (add-hook 'typescript-ts-mode-hook #'my/trigger-nix-eglot-sequence)
   (add-hook 'tsx-ts-mode-hook        #'my/trigger-nix-eglot-sequence)
-
+  (add-hook 'nix-ts-mode-hook #'my/trigger-nix-eglot-sequence)
 
 #+END_SRC
 

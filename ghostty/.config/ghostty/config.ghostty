@@ -23,5 +23,5 @@ keybind = ctrl+v=paste_from_clipboard
 # Maps Ctrl+Shift+C to stop commands (SIGINT)
 keybind = ctrl+shift+c=text:\x03
 
-theme = "Atom One Dark"
+theme = "Black Metal (Dark Funeral)"
 keybind = f11=toggle_fullscreen

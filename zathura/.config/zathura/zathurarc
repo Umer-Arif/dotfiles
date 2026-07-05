@@ -5,7 +5,7 @@ set page-padding 20
 set recolor true
 set recolor-keephue false
 set recolor-darkcolor "#fffafa"
-set recolor-lightcolor "#1a1a25"
+set recolor-lightcolor "#1a2025"
 set search-highlight true
 set synctex true
 

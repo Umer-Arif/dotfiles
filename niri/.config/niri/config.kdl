@@ -167,17 +167,17 @@ layout {
     // You can change how the focus ring looks.
     focus-ring {
         // Uncomment this line to disable the focus ring.
-        /// off
+        //off
         // How many logical pixels the ring extends out from the windows.
         width 2
 
         // Colors can be set in a variety of ways:
         // - CSS named colors: "red"
         // - RGB hex: "#rgb", "#rgba", "#rrggbb", "#rrggbbaa"
-        // - CSS-like notation: "rgb(255, 127, 0)", rgba(), hsl() and a few others.
+        // - CSS-like notation: "rgb(0, 255, 140)", rgba(), hsl() and a few others.
 
         // Color of the ring on the active monitor.
-        active-color "rgb(248, 251, 178)"
+       active-color "rgb(45, 126, 109)"
 
         // Color of the ring on inactive monitors.
         inactive-color "rgb(54, 163, 123)"

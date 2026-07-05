@@ -34,6 +34,9 @@
     ".config/hypr".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/hypr/.config/hypr";
     
     ".config/zathura".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/zathura/.config/zathura";
+    
+    ".config/fastfetch".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/fastfetch/.config/fasfetch";
+
 };
 
   
@@ -49,83 +52,26 @@
     ];
 };
 
-programs.fastfetch = {
+ 
+gtk = {
   enable = true;
-  settings = {
-    logo = {
-      type = "small";
+  theme = {
+    name = "Colloid-Dark-Everforest"; # Pure CSS, uses exact Everforest colors natively
+    package = pkgs.colloid-gtk-theme.override {
+      tweaks = [ "everforest" ];      # Compiles the explicit Everforest theme sheet
     };
-    display = {
-      separator = "  ";
-    };
-    modules = [
-      {
-        type = "title";
-        key = "  user ";
-        keyColor = "31";
-      }
-      {
-        type = "host";
-        key = "    hname";
-        keyColor = "32";
-      }
-      {
-        type = "uptime";
-        key = "    uptime";
-        keyColor = "33";
-      }
-      {
-        type = "os";
-        key = "    distro";
-        keyColor = "34";
-      }
-      {
-        type = "kernel";
-        key = "    kernel";
-        keyColor = "35";
-      }
-      {
-        type = "terminal";
-        key = "  term  ";
-        keyColor = "36";
-      }
-      {
-        type = "shell";
-        key = "  shell ";
-        keyColor = "37";
-      }
-      {
-        type = "cpu";
-        key = "  cpu   ";
-        keyColor = "34";
-      }
-      {
-        type = "disk";
-        key = "    disk  ";
-        keyColor = "35";
-      }
-      {
-        type = "memory";
-        key = "  memory";
-        keyColor = "36";
-      }
-    ];
+  };
+  iconTheme = {
+    name = "Tela-green-dark";
+    package = pkgs.tela-icon-theme;
   };
 };
 
 
- 
-  gtk = {
-    enable = true;
-    theme = {
-      name = "Arc-Dark";
-      package = pkgs.arc-theme;
-    };
-    iconTheme = {
-      name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme;
-    };
-  }; # <--- Make sure this semicolon closes the GTK block!
+# Force GTK to read Everforest directly via the environment layout
+home.sessionVariables = {
+  GTK_THEME = "Everforest-Dark-B";
+};
 
   # This is a separate top-level home-manager option
   home.pointerCursor = {

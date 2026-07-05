@@ -140,7 +140,6 @@
     thunar                 
     thunar-volman           
     tumbler
-    vscode
     pavucontrol
     blueman
     networkmanagerapplet
@@ -148,6 +147,8 @@
     zathura
     firefox
     brightnessctl
+    vscodium
+    pkgs.gowall
   ];
 
     # Make sure everything is enclosed inside fonts = { ... };
@@ -268,7 +269,7 @@ xdg.portal = {
           (deflayer default
             @capsec
           )
-        '';
+        '';{}
       };
     };
   };
