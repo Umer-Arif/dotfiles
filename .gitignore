@@ -4,3 +4,4 @@ hardware-configuration.nix
 
 # ...EXCEPT for init.org
 !/emacs/init.org
+!/emacs/early-init.el

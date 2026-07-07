@@ -206,7 +206,6 @@ xdg.portal = {
 };
 
 
-
    # zsh shell configuration
   programs.zsh = {
     enable = true;
@@ -233,7 +232,6 @@ xdg.portal = {
     syntaxHighlighting.enable = true; 
   };
 
-     # Add to home.nix:
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;

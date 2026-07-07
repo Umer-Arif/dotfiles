@@ -6,7 +6,6 @@
 
   programs.home-manager.enable = true;
 
-
   home.packages = with pkgs; [
     # Add your personal CLI tools here later!
     cmake
