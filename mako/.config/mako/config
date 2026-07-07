@@ -1,0 +1,80 @@
+# ==============================================================================
+# MAKO NOTIFICATION MANAGER CONFIGURATION
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# GLOBAL STYLE SETTINGS
+# ------------------------------------------------------------------------------
+
+# Font family and size for the notification text
+font=monospace 10
+
+# Background color of the notification window (RGBA format: #RRGGBBAA)
+background-color=#2e302e
+
+# Border color of the notification window
+border-color=#89b4faf0
+
+# Width of the border around the notification window in pixels
+border-size=2
+
+# Radius of the notification window corners in pixels (0 for sharp corners)
+border-radius=8
+
+# Text color for the notification summary and body
+text-color=#ffffff
+
+# Width of the notification window in pixels
+width=300
+
+# Maximum height of a single notification window in pixels
+height=110
+
+# Margin from the screen edges (Top Right Bottom Left)
+margin=20,20,0,0
+
+# Padding inside the notification window (Top Right Bottom Left)
+padding=15,15,15,15
+
+# Which corner of the screen to anchor the notifications to
+# Options: top-left, top-center, top-right, bottom-left, bottom-center, bottom-right
+anchor=top-right
+
+# Format of the text inside the notification
+# %s = Summary, %b = Body, %a = Application Name
+format=<b>%s</b>\n%b
+
+# How long notifications stay on screen in milliseconds (e.g., 5000 = 5 seconds)
+# Set to 0 to keep them on screen until dismissed
+default-timeout=3000
+
+# Layer to display notifications on (top ensures it sits above windows)
+layer=top
+
+# ------------------------------------------------------------------------------
+# INTERACTION & BEHAVIOR
+# ------------------------------------------------------------------------------
+
+# Action to perform when left-clicking a notification
+# Options: none, dismiss, invoke-default-action
+on-button-left=invoke-default-action
+
+# Action to perform when middle-clicking a notification
+on-button-middle=none
+
+# Action to perform when right-clicking a notification
+on-button-right=dismiss
+
+# ------------------------------------------------------------------------------
+# URGENCY OVERRIDES
+# ------------------------------------------------------------------------------
+
+# Critical urgency notifications (e.g., low battery)
+[urgency=high]
+border-color=#f38ba8ff
+default-timeout=0
+
+# Low urgency notifications (e.g., changing volume)
+[urgency=low]
+border-color=#6c7086ff
+default-timeout=2500
