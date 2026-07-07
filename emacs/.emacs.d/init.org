@@ -6,8 +6,6 @@
 
 * Initialization
 #+BEGIN_SRC emacs-lisp
-  ;; This must be the VERY first thing in your configuration
-  (setq package-enable-at-startup nil)
 
   ;; Auto-save and Backup Configuration
   (make-directory "~/.emacs.d/auto-save-list" t)
@@ -27,67 +25,101 @@
 * UI
 #+BEGIN_SRC emacs-lisp
 
-  (setq-default inhibit-startup-message t    ; Don't show splash screen
-                 visible-bell t                      ; Flash on errors
-                 fill-column 100                     ; Wrap at 100 chars
-                 tab-width 4                         ; Tab width
-                 initial-scratch-message ";; WELCOME TO EMACS! \n\n")
+  ;; --- Don't show splash screen ------------------------------------------------
+  (setq-default inhibit-startup-message t)
 
-   (menu-bar-mode -1)       ; Turn off the menu bar at top of window (File, Edit, Options, etc.)
-   (tool-bar-mode -1)       ; Turn off the toolbar with icons (save, undo, cut, copy, paste)
-   (scroll-bar-mode -1)     ; Turn off the scroll bar on the side of the window
-   (fset 'yes-or-no-p 'y-or-n-p)  ; Replace "yes/no" prompts with shorter "y/n" prompts
-   (delete-selection-mode 1)      ; When you type, replace selected text instead of inserting before it
+  ;; --- Flash on errors instead of making a sound -------------------------------
+  (setq-default visible-bell t)
 
-   (defun me/garbage-collect-maybe ()
-     (garbage-collect))  ; Force Emacs to free up unused memory
+  ;; --- Wrap lines at 100 characters --------------------------------------------
+  (setq-default fill-column 100)
 
-   (add-hook 'focus-out-hook #'me/garbage-collect-maybe)  ; Run garbage collection when you leave the Emacs window
+  ;; --- Set default tab width to 4 spaces ---------------------------------------
+  (setq-default tab-width 4)
 
-  (add-to-list 'default-frame-alist '(alpha-background . 0.9))  ; Make frame 70% transparent (0 = fully transparent, 1 = opaque)
+  ;; --- Set custom greeting message for the initial scratch buffer --------------
+  (setq-default initial-scratch-message ";; WELCOME TO EMACS! \n\n")
 
-   ;; Allow this project variable to be set without asking for confirmation each time
-   (add-to-list 'safe-local-variable-values
-                '(before-save-hook . delete-trailing-whitespace))  ; Auto-trim trailing spaces when saving
+  ;; --- Turn off the menu bar at top of window ----------------------------------
+  (menu-bar-mode -1)
 
-   ;; Remember cursor position in files when you reopen them
-   (save-place-mode 1)
+  ;; --- Turn off the toolbar with icons -----------------------------------------
+  (tool-bar-mode -1)
 
-   ;; Keep cursor position even for files on USB drives or network shares
-   (setq save-place-forget-unreadable-files nil)
+  ;; --- Turn off the scroll bar on the side of the window -----------------------
+  (scroll-bar-mode -1)
 
-   ;; Store the cursor position data in a custom file inside Emacs config folder
-   (setq save-place-file (expand-file-name "places" user-emacs-directory))
+  ;; --- Replace "yes/no" prompts with shorter "y/n" prompts ---------------------
+  (fset 'yes-or-no-p 'y-or-n-p)
 
-   ;; Update the saved cursor position immediately when you save a file
-   (add-hook 'after-save-hook 'save-place-to-alist)
+  ;; --- When you type, replace selected text instead of inserting before it ------
+  (delete-selection-mode 1)
 
-   ;; Line Numbers
-   (column-number-mode t)                     ; Show column number in mode line (e.g., "Col: 42")
-   (global-display-line-numbers-mode t)       ; Show line numbers for every buffer by default
-   (global-hl-line-mode 1)                    ; Highlight the current line with a background color
+  ;; --- Force Emacs to free up unused memory ------------------------------------
+  (defun me/garbage-collect-maybe ()
+    (garbage-collect))
 
-   (setq display-line-numbers-type 'relative) ; Show line numbers as distance from current line (e.g., 1, 1, current, 1, 2, 3...)
+  ;; --- Run garbage collection when you leave the Emacs window ------------------
+  (add-hook 'focus-out-hook #'me/garbage-collect-maybe)
 
-   ;; Turn off line numbers for terminal/shell buffers (they don't play well with prompt lines)
-   (dolist (mode '(org-mode-hook
-                   org-agenda-mode-hook
-                   term-mode-hook
-                   shell-mode-hook
-                   eshell-mode-hook
-                   vterm-mode-hook
-                   eat-mode))
-     (add-hook mode (lambda () (display-line-numbers-mode 0))))
+  ;; --- Make frame 90% transparent ----------------------------------------------
+  (add-to-list 'default-frame-alist '(alpha-background . 0.9))
 
-   ;; Force UTF-8 as the default everywhere
-   (set-language-environment "UTF-8")           ; Tell Emacs to use UTF-8 for language settings
-   (prefer-coding-system 'utf-8)                ; Prefer UTF-8 when reading/writing files
-   (set-selection-coding-system 'utf-8)         ; Use UTF-8 for copy/paste with system clipboard
-   (set-keyboard-coding-system 'utf-8)          ; Use UTF-8 for keyboard input
-   (setq default-buffer-file-coding-system 'utf-8-unix)  ; Save files as UTF-8 with Unix line endings
+  ;; --- Auto-trim trailing spaces when saving without asking confirmation --------
+  (add-to-list 'safe-local-variable-values
+               '(before-save-hook . delete-trailing-whitespace))
 
-   ;;(setq-default cursor-type 'bar)  ;; thin vertical bar cursor (disabled, uncomment if wanted)
-   (blink-cursor-mode 1)               ; Make cursor blink (1 = on, -1 = off)
+  ;; --- Remember cursor position in files when you reopen them ------------------
+  (save-place-mode 1)
+
+  ;; --- Keep cursor position even for files on USB drives or network shares -----
+  (setq save-place-forget-unreadable-files nil)
+
+  ;; --- Store the cursor position data in a custom file inside Emacs config folder
+  (setq save-place-file (expand-file-name "places" user-emacs-directory))
+
+  ;; --- Update the saved cursor position immediately when you save a file --------
+  (add-hook 'after-save-hook 'save-place-to-alist)
+
+  ;; --- Show column number in mode line -----------------------------------------
+  (column-number-mode t)
+
+  ;; --- Show line numbers for every buffer by default ---------------------------
+  (global-display-line-numbers-mode t)
+
+  ;; --- Highlight the current line with a background color ----------------------
+  (global-hl-line-mode 1)
+
+  ;; --- Show line numbers as distance from current line -------------------------
+  (setq display-line-numbers-type 'relative)
+
+  ;; --- Turn off line numbers for terminal/shell and Org buffers ----------------
+  (dolist (mode '(org-mode-hook
+                  org-agenda-mode-hook
+                  term-mode-hook
+                  shell-mode-hook
+                  eshell-mode-hook
+                  vterm-mode-hook
+                  eat-mode))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+  ;; --- Tell Emacs to use UTF-8 for language settings ---------------------------
+  (set-language-environment "UTF-8")
+
+  ;; --- Prefer UTF-8 when reading/writing files ---------------------------------
+  (prefer-coding-system 'utf-8)
+
+  ;; --- Use UTF-8 for copy/paste with system clipboard --------------------------
+  (set-selection-coding-system 'utf-8)
+
+  ;; --- Use UTF-8 for keyboard input --------------------------------------------
+  (set-keyboard-coding-system 'utf-8)
+
+  ;; --- Save files as UTF-8 with Unix line endings ------------------------------
+  (setq default-buffer-file-coding-system 'utf-8-unix)
+
+  ;; --- Make cursor blink -------------------------------------------------------
+  (blink-cursor-mode 1)
 
 #+END_SRC
 ** Font
@@ -102,12 +134,156 @@
 #+END_SRC
 * Themes
 #+BEGIN_SRC emacs-lisp
+  ;; Treat all custom themes as safe to prevent Emacs from prompting you on startup
   (setq custom-safe-themes t)
 
-
+  ;; Add your custom theme directory to Emacs's theme search path
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/t1-emacs-themes")
+
+  ;; Load the specific dark theme flavor
   (load-theme 'omer-kaolin-dark)
 
+#+END_SRC
+* Keybinds
+** Directory navigation
+#+BEGIN_SRC emacs-lisp
+
+      ;; For init.org
+    (defun my/open-init-org ()
+      "Open the init.org file."
+      (interactive)
+      (find-file "~/dotfiles/emacs/.emacs.d/init.org"))
+
+    (global-set-key (kbd "C-c i") 'my/open-init-org)
+
+
+  ;; Open ~/Documents/org directory
+  (defun my/open-org-directory ()
+    "Open the ~/Documents/org directory in dired."
+    (interactive)
+    (dired "~/Documents/org"))
+
+  (global-set-key (kbd "C-c C-o") 'my/open-org-directory)
+
+  ;;Open dotfiles directory
+  (defun my/open-dotfiles ()
+    "Open the ~/dotfiles directory in dired."
+    (interactive)
+    (dired "~/dotfiles"))
+
+  (global-set-key (kbd "C-c d") 'my/open-dotfiles)
+
+#+END_SRC
+
+** Code Execution
+#+BEGIN_SRC emacs-lisp
+
+  ;; --- Python Execution (C-c p) ------------------------------------------------
+  (defun omer/run-python ()
+    "Run current Python file."
+    (interactive)
+    (unless (string= (file-name-extension (buffer-file-name)) "py")
+      (user-error "Not a Python file"))
+    (save-buffer)
+    (python-shell-send-buffer)
+    (python-shell-switch-to-shell))
+
+  (global-set-key (kbd "C-c p") #'omer/run-python)
+
+  ;; --- C Compilation & Execution (C-c c) ---------------------------------------
+  (defun omer/run-c ()
+    "Compile and run C code."
+    (interactive)
+    (unless (string= (file-name-extension (buffer-file-name)) "c")
+      (user-error "Not a C file"))
+    (save-buffer)
+    (let ((output (file-name-sans-extension (buffer-file-name))))
+      ;; Compile and execute via async shell to avoid blocking Emacs
+      (async-shell-command
+       (format "gcc %s -o %s && %s"
+               (shell-quote-argument (buffer-file-name))
+               (shell-quote-argument output)
+               (shell-quote-argument output))
+       "*C Output*")
+      (switch-to-buffer-other-window "*C Output*")))
+
+  (global-set-key (kbd "C-c c") #'omer/run-c)
+
+  ;; --- Rust Execution via vterm (C-c r) ----------------------------------------
+  (defun omer/run-rust ()
+    "Run `cargo run` for current Rust project."
+    (interactive)
+    (unless (string= (file-name-extension (buffer-file-name)) "rs")
+      (user-error "Not a Rust file"))
+    (save-buffer)
+    ;; Find project root directory containing Cargo.toml
+    (let ((default-directory
+           (or (locate-dominating-file default-directory "Cargo.toml")
+               (user-error "Not inside a Cargo project"))))
+      (let ((buf (get-buffer-create "*Rust Terminal*")))
+        (switch-to-buffer-other-window buf)
+        (unless (derived-mode-p 'vterm-mode)
+          (vterm-mode))
+        (vterm-send-string "cargo run")
+        (vterm-send-return))))
+
+  (global-set-key (kbd "C-c r") #'omer/run-rust)
+
+  ;; --- Lua Execution (C-c l) ---------------------------------------------------
+  (defun omer/run-lua ()
+    "Run current Lua file."
+    (interactive)
+    (unless (string= (file-name-extension (buffer-file-name)) "lua")
+      (user-error "Not a Lua file"))
+    (save-buffer)
+    (async-shell-command
+     (format "lua %s" (shell-quote-argument (buffer-file-name)))
+     "*Lua Output*")
+    (switch-to-buffer-other-window "*Lua Output*"))
+
+  (global-set-key (kbd "C-c l") #'omer/run-lua)
+
+  ;; --- Common Lisp Evaluation via SLY (C-c e) ----------------------------------
+  (defun omer/run-lisp ()
+    "Evaluate Common Lisp buffer using SLY."
+    (interactive)
+    (unless (derived-mode-p 'lisp-mode)
+      (user-error "Not a Common Lisp buffer"))
+    (sly-eval-buffer))
+
+  (global-set-key (kbd "C-c e") #'omer/run-lisp)
+
+
+#+END_SRC
+** Buffer
+#+BEGIN_SRC emacs-lisp
+    ;; WARNING: Muscle Memory Swap!
+  (global-set-key (kbd "C-x C-s") 'isearch-forward) ; Swapped: Search forward
+  (global-set-key (kbd "C-s") 'save-buffer)         ; Swapped: Save current buffer
+
+  ;; Buffer Management
+  (global-set-key (kbd "C-<tab>") #'switch-to-buffer)
+  (global-set-key (kbd "C-x C-b") 'ibuffer)           ; Open advanced buffer menu
+
+  ;; ---  DIRED MODE CUSTOMIZATION -------------------------------------------------------
+  (defun my/dired-open-file ()
+    "Open file at point. Use async external viewer for media/docs, normal for text files."
+    (interactive)
+    (let* ((file (dired-get-filename nil t))
+           (ext (and file (file-name-extension file))))
+      (if (and ext (member (downcase ext)
+                           '("pdf" "mp4" "mkv" "avi" "mov" "mp3" "flac"
+                             "wav" "ogg" "m4a" "webm" "doc" "docx"
+                             "xls" "xlsx" "ppt" "pptx")))
+          (start-process "dired-open" nil "xdg-open" file)
+        (dired-find-file))))
+
+  ;; Bind smart opener to RET (Enter) in Dired
+  (with-eval-after-load 'dired
+    (define-key dired-mode-map (kbd "RET") 'my/dired-open-file))
+
+  ;; NOTE: This will disable standard Emacs help menus bound to C-h!
+  (keyboard-translate ?\C-h ?\C-?)
 
 #+END_SRC
 * Package manager
@@ -159,310 +335,142 @@
 
 #+END_SRC
 
-* Org-mode
-#+BEGIN_SRC emacs-lisp
-  (use-package org
-    :ensure t
-    :config
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((emacs-lisp . t)
-       (python . t)
-       (shell . t)
-       (latex . t)
-       (js . t)
-       (C . t))))
-
-  (setq org-ellipsis "▾"
-        org-src-window-setup 'current-window
-        org-startup-with-inline-images t
-        org-startup-with-latex-preview nil
-        org-image-actual-width nil
-        org-confirm-babel-evaluate nil
-        org-log-into-drawer t)
-
-  (add-hook 'org-mode-hook #'org-indent-mode)
-
-  ;; Set org faces AFTER org is loaded
-  (with-eval-after-load 'org
-    (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil)
-    (set-face-attribute 'org-table nil :family "Monospace"))
-
-  ;; Option 2: org-modern + org-superstar (working version)
-  (use-package org-modern
-    :ensure t
-    :config
-    (setq org-modern-hide-stars 'leading
-          org-modern-star nil
-          org-auto-align-tags nil
-          org-tags-column 0
-          org-catch-invisible-edits 'show-and-error
-          org-special-ctrl-a/e t
-          org-insert-heading-respect-content t
-          org-hide-emphasis-markers t
-          org-pretty-entities t)
-    (setq org-modern-list
-          '((?+ . "•")
-            (?* . "◆")
-            (?1 . "◦")))
-    (global-org-modern-mode))
-
-  (use-package org-superstar
-    :ensure t
-    :after org
-    :hook (org-mode . org-superstar-mode)
-    :config
-    (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿" "●" "○" "◆" "◇")
-          org-superstar-item-bullet-alist '((?+ . "•") (?- . "•") (?* . "•")))
-
-    ;; Auto-refresh when buffer loads
-    (add-hook 'org-mode-hook
-              (lambda () (org-superstar-restart))))
-
-  (use-package org-super-agenda
-    :ensure t
-    :config
-    (setq org-agenda-files '("~/shr/org/todo.org")
-          org-agenda-span 1
-          org-agenda-start-day "+0d"
-          org-agenda-skip-timestamp-if-done t
-          org-agenda-skip-deadline-if-done t
-          org-agenda-skip-scheduled-if-done t
-          org-agenda-skip-scheduled-if-deadline-is-shown t
-          org-agenda-skip-timestamp-if-deadline-is-shown t
-          org-agenda-current-time-string "← now ────────────────────"
-          org-agenda-time-grid '((daily today today) (800 1000 1200 1400 1600 1800 2000) "......" "┄┄┄┄┄┄")
-          org-agenda-timegrid-use-ampm t
-          org-agenda-prefix-format '((agenda . "  %?-2i %t ")
-                                     (todo . "  %-2i")
-                                     (tags . "  %-2i")
-                                     (search . "  %-2i"))
-          org-agenda-hide-tags-regexp ".*"
-          org-agenda-category-icon-alist
-          `(("Errands" ("💪") nil nil :ascent center)
-            ("Career" ("🎯") nil nil :ascent center)
-            ("Japanese" ("🎌") nil nil :ascent center)
-            ("Study" ("📚") nil nil :ascent center)
-            ("Life" ("🐳") nil nil :ascent center)
-            ("Contemplation" ("💫") nil nil :ascent center)
-            ("Wishlist" ("🤲") nil nil :ascent center)
-            ("Goals" ("🏆") nil nil :ascent center)))
-
-    (set-face-attribute 'org-super-agenda-header nil
-                        :weight 'bold
-                        :height 1.05
-                        :box '(:line-width 2 :color "gray50"))
-    (org-super-agenda-mode))
-
-  ;; Group definitions (outside use-package)
-  (setq org-super-agenda-groups
-        '((:name "Today 🗓️ "
-                 :order 1
-                 :time-grid t
-                 :date today
-                 :scheduled today
-                 :face 'warning)
-          (:name "Overdue ❗ "
-                 :order 2
-                 :scheduled past
-                 :face 'error)
-          (:name "Errands 💪 "
-                 :order 3
-                 :tag "errand")
-          (:name "Career 🎯 "
-                 :order 4
-                 :tag "career")
-          (:name "Study 📚 "
-                 :order 5
-                 :tag "study")
-          (:name "Life 🐳 "
-                 :order 6
-                 :tag "life")
-          (:name "Contemplation 💫 "
-                 :order 7
-                 :tag "thought")
-          (:name "Wishlist 🤲 "
-                 :order 8
-                 :tag "wish")
-          (:name "Goals 🏆 "
-                 :order 9
-                 :tag "goal")))
-
-  ;; Auto-refresh agenda
-  (add-hook 'org-agenda-mode-hook
-            (lambda () (org-super-agenda-mode) (org-agenda-redo)))
-
-  (use-package org-download
-    :ensure t
-    :custom
-    (org-download-heading-lvl nil)           ; Save in data/ subdir
-    (org-download-image-org-width 350)       ; Display width
-    (org-download-timestamp "%Y%m%d-%H%M%S") ; Unique filenames
-
-    ;; Screenshot method (auto-detect Wayland vs X11)
-    (org-download-screenshot-method
-     (cond ((executable-find "grim") "grim -g \"$(slurp)\" %s")  ; Wayland
-           ((executable-find "maim") "maim -s %s")               ; X11
-           ((executable-find "spectacle") "spectacle -rb %s")))  ; KDE
-
-    ;; Image editor (use whatever you have)
-    (org-download-edit-cmd
-     (cond ((executable-find "krita") "krita %s")
-           ((executable-find "gimp") "gimp %s")
-           ((executable-find "eog") "eog %s")))
-
-    ;; Default directory for images
-    (org-download-method 'directory)  ; Use ./data/ subdirectory
-
-    ;; Backend for downloading
-    (org-download-backend 'curl)      ; Use curl instead of wget
-
-    ;; Don't confirm before downloading
-    (org-download-display-inline-images t)
-
-    ;; Annotate prompt (if you use annotation)
-    (org-download-annotate-function nil))
-
-  ;; Keybindings (optional)
-  (with-eval-after-load 'org
-    (define-key org-mode-map (kbd "C-c C-s") 'org-download-screenshot)
-    (define-key org-mode-map (kbd "C-c C-y") 'org-download-yank))  ; Paste from clipboard
-
-  (use-package olivetti
-    :ensure t
-    :hook
-    (org-mode . olivetti-mode)
-    (org-agenda-mode . olivetti-mode)
-    :custom
-    ;; Choose the wrapping width you like:
-    (olivetti-body-width 90))   ;; narrower than default
-
-#+END_SRC
-
 * Packages
 #+BEGIN_SRC emacs-lisp
 
-    (use-package goto-line-preview
-            :ensure t
-            :bind ("C-x C-j" . 'goto-line-preview))
+  ;; --- Save minibuffer history across Emacs sessions so you can reuse past inputs
+  (use-package savehist
+    :init
+    (savehist-mode 1))
 
-          (use-package sudo-edit
-            :ensure t)
+  ;; --- Provide a lightweight, vertical completion interface for the minibuffer --
+  (use-package vertico
+    :ensure t
+    :init
+    (vertico-mode)
+    (setq vertico-cycle t)
+    :config
+    (setq vertico-sort-function #'vertico-sort-history-alpha))
 
-          (put 'dired-find-alternate-file 'disabled nil)
-
-          (use-package savehist
-            :init
-            (savehist-mode 1))
-
-          (use-package vertico
-            :ensure t
-            :init
-            (vertico-mode)
-            (setq vertico-cycle t)
-            :config
-            (setq vertico-sort-function #'vertico-sort-history-alpha))
-
-          (use-package marginalia
-            :ensure t
-            :config
-            (marginalia-mode))
-
-          (use-package orderless
-            :ensure t
-            :config
-            (setq completion-styles '(orderless basic)))
-
-          (use-package all-the-icons
-            :if (display-graphic-p)
-            :ensure t)
-
-          (use-package all-the-icons-dired
-            :ensure t
-            :hook (dired-mode . all-the-icons-dired-mode))
-
-          (use-package all-the-icons-completion
-            :ensure t
-            :after (marginalia all-the-icons)
-            :init
-            (all-the-icons-completion-mode))
-
-          (use-package rainbow-delimiters
-            :ensure t
-            :hook (prog-mode . rainbow-delimiters-mode))
-
-          (use-package smartparens
-            :ensure t
-            :hook ((prog-mode . smartparens-mode)
-                   (org-mode . smartparens-mode)))
-
-
-          (use-package undo-tree
-            :ensure t
-            :custom
-            (undo-tree-auto-save-history t)
-            (undo-tree-history-directory-alist
-             `((".*" . ,(expand-file-name "undo/" user-emacs-directory))))
-            :config
-            (make-directory (expand-file-name "undo/" user-emacs-directory) t)
-            (global-undo-tree-mode))
-
-
-          (use-package ligature
-            :ensure t
-            :config
-            (ligature-set-ligatures 't '("www"))
-            (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
-            (ligature-set-ligatures 'prog-mode '("-<<" "-<" "-<-" "<--" "<---" "<<-" "<-" "->" "->>" "-->" "--->" "->-" ">-" ">>-"
-                                                 "=<<" "=<" "=<=" "<==" "<===" "<<=" "<=" "=>" "=>>" "==>" "===>" "=>=" ">=" ">>="
-                                                 "<->" "<-->" "<--->" "<---->" "<=>" "<==>" "<===>" "<====>" "::" ":::" "__"
-                                                 "<~~" "</" "</>" "/>" "~~>" "==" "!=" "/=" "~=" "<>" "===" "!==" "!===" "=/=" "=!="
-                                                 "<:" ":=" "*=" "*+" "<*" "<*>" "*>" "<|" "<|>" "|>" "<." "<.>" ".>" "+*" "=*" "=:"
-                                                 ":>" "(*" "*)" "/*" "*/" "[|" "|]" "{|" "|}" "++" "+++" "\\/" "/\\" "|-" "-|" "<!--" "<!---"))
-            (global-ligature-mode))
-
-
-          (use-package transient
-            :ensure t)
-
-          (use-package markdown-mode
-          :ensure t
-          :mode ("README\\.md\\'" . gfm-mode)
-          :init (setq markdown-command "multimarkdown"))
-
-          (use-package indent-bars
-            :ensure t
-            :hook (prog-mode . indent-bars-mode)
-            :custom
-            (indent-bars-starting-column 0))
-
-          (use-package kind-icon
-            :ensure t
-            :after corfu
-            :custom
-            (kind-icon-blend-background t)
-            (kind-icon-default-face 'corfu-default) ; only needed with blend-background
-            :config
-            (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
-
-          (use-package magit
-            :ensure t)
-
-  (use-package nix-ts-mode
-    :ensure t)
-
-  ;; Optional but highly recommended: Auto-formatting on save
-  (use-package apheleia
+  ;; --- Add clean UI descriptions and annotations next to items in completion lists
+  (use-package marginalia
     :ensure t
     :config
-    ;; Use nixfmt or alejandra (whichever you prefer, nixfmt is standard)
-    (setf (alist-get 'nix-mode apheleia-mode-alist) 'nixfmt))
+    (marginalia-mode))
 
+  ;; --- Enable flexible, space-separated, out-of-order pattern matching ---------
+  (use-package orderless
+    :ensure t
+    :config
+    (setq completion-styles '(orderless basic)))
+
+
+  ;; --- Preview lines dynamically in a buffer window before jumping -------------
+  (use-package goto-line-preview
+    :ensure t
+    :bind ("C-x C-j" . 'goto-line-preview))
+
+  ;; --- Edit files with root/sudo privileges directly inside Emacs ---------------
+  (use-package sudo-edit
+    :ensure t)
+
+  ;; --- Prevent Dired from spawning a separate buffer window for every folder ---
+  (put 'dired-find-alternate-file 'disabled nil)
+
+
+  ;; --- Provide a core library of icons for graphic-mode setups -----------------
+  (use-package all-the-icons
+    :if (display-graphic-p)
+    :ensure t)
+
+  ;; --- Bring high-quality file and folder icons into Dired lists ----------------
+  (use-package all-the-icons-dired
+    :ensure t
+    :hook (dired-mode . all-the-icons-dired-mode))
+
+  ;; --- Attach colorful filetype icons to your minibuffer completion rows -------
+  (use-package all-the-icons-completion
+    :ensure t
+    :after (marginalia all-the-icons)
+    :init
+    (all-the-icons-completion-mode))
+
+  ;; --- Add colorful contextual prefix icons to your auto-completion lists -------
+  (use-package kind-icon
+    :ensure t
+    :after corfu
+    :custom
+    (kind-icon-blend-background t)
+    (kind-icon-default-face 'corfu-default)
+    :config
+    (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+
+
+  ;; --- Colorize matching brackets and parentheses by their nesting level -------
+  (use-package rainbow-delimiters
+    :ensure t
+    :hook (prog-mode . rainbow-delimiters-mode))
+
+  ;; --- Automatically insert, wrap, and delete matching pairs of delimiters -------
+  (use-package smartparens
+    :ensure t
+    :hook ((prog-mode . smartparens-mode)
+           (org-mode . smartparens-mode)))
+
+  ;; --- Replace the standard undo system with a visual, branching tree -----------
+  (use-package undo-tree
+    :ensure t
+    :custom
+    (undo-tree-auto-save-history t)
+    (undo-tree-history-directory-alist
+     `((".*" . ,(expand-file-name "undo/" user-emacs-directory))))
+    :config
+    (make-directory (expand-file-name "undo/" user-emacs-directory) t)
+    (global-undo-tree-mode))
+
+  ;; --- Draw vertical guide indicators to clearly show code indentation blocks ---
+  (use-package indent-bars
+    :ensure t
+    :hook (prog-mode . indent-bars-mode)
+    :custom
+    (indent-bars-starting-column 0))
+
+  ;; --- Render beautiful typographic font ligatures in code ----------------------
+  (use-package ligature
+    :ensure t
+    :config
+    (ligature-set-ligatures 't '("www"))
+    (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+    (ligature-set-ligatures 'prog-mode '("-<<" "-<" "-<-" "<--" "<---" "<<-" "<-" "->" "->>" "-->" "--->" "->-" ">-" ">>-"
+                                         "=<<" "=<" "=<=" "<==" "<===" "<<=" "<=" "=>" "=>>" "==>" "===>" "=>=" ">=" ">>="
+                                         "<->" "<-->" "<--->" "<---->" "<=>" "<==>" "<===>" "<====>" "::" ":::" "__"
+                                         "<~~" "</" "</>" "/>" "~~>" "==" "!=" "/=" "~=" "<>" "===" "!==" "!===" "=/=" "=!="
+                                         "<:" ":=" "*=" "*+" "<*" "<*>" "*>" "<|" "<|>" "|>" "<." "<.>" ".>" "+*" "=*" "=:"
+                                         ":>" "(*" "*)" "/*" "*/" "[|" "|]" "{|" "|}" "++" "+++" "\\/" "/\\" "|-" "-|" "<!--" "<!---"))
+    (global-ligature-mode))
+
+
+  ;; --- Provide a keyboard-driven prefix/popup menu framework -------------------
+  (use-package transient
+    :ensure t)
+
+  ;; --- Enable comprehensive syntax highlighting and tools for Markdown ----------
+  (use-package markdown-mode
+    :ensure t
+    :mode ("README\\.md\\'" . gfm-mode)
+    :init (setq markdown-command "multimarkdown"))
+
+  ;; --- A legendary, full-featured Git interface directly inside Emacs ------------
+  (use-package magit
+    :ensure t)
+
+  ;; --- Run a highly performant terminal emulator inside a buffer window ---------
   (use-package vterm
-  :ensure t)
+    :ensure t)
 
-          (elpaca-process-queues)
 
+  ;; --- Tell the Elpaca package manager to process everything queued up above ----
+  (elpaca-process-queues)
 
 #+END_SRC
 
@@ -511,163 +519,105 @@
     (doom-modeline-minor-modes nil))         ; Remove minor modes display-line-numbers-type
 #+END_SRC
 
-* Keybinds
-** Directory navigation
+* Org-mode
 #+BEGIN_SRC emacs-lisp
 
-    ;; Style.css for waybar
-    (defun my/open-waybar-style ()
-      "Open the Waybar style.css file."
-      (interactive)
-      (find-file "~/dotfiles/waybar/.config/waybar/hypr-style.css"))
+  ;; --- Core Engine & Babel Configuration ----------------------------------------
+  (use-package org
+    :ensure t
+    :config
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((emacs-lisp . t))))
 
-    (global-set-key (kbd "C-c w") 'my/open-waybar-style)
+  ;; --- Layout & Behavior Defaults ----------------------------------------------
+  (setq org-ellipsis "▾"
+        org-src-window-setup 'current-window
+        org-startup-with-inline-images t
+        org-startup-with-latex-preview nil
+        org-image-actual-width nil
+        org-confirm-babel-evaluate nil
+        org-log-into-drawer t)
 
-    ;; For init.org
-    (defun my/open-init-org ()
-      "Open the init.org file."
-      (interactive)
-      (find-file "~/dotfiles/emacs/.emacs.d/init.org"))
-
-    (global-set-key (kbd "C-c i") 'my/open-init-org)
+  ;; --- Font & Interface Trimming -----------------------------------------------
+  (with-eval-after-load 'org
+    (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil)
+    (set-face-attribute 'org-table nil :family "Monospace"))
 
 
-    ;; Open ~/Documents/org directory
-    (defun my/open-org-directory ()
-      "Open the ~/Documents/org directory in dired."
-      (interactive)
-      (dired "~/Documents/org"))
+  ;; --- Modern Minimalist UI Layer ----------------------------------------------
+  (use-package org-modern
+    :ensure t
+    :config
+    (setq org-modern-hide-stars 'leading
+          org-modern-star nil
+          org-auto-align-tags nil
+          org-tags-column 0
+          org-catch-invisible-edits 'show-and-error
+          org-special-ctrl-a/e t
+          org-insert-heading-respect-content t
+          org-hide-emphasis-markers t
+          org-pretty-entities t)
+    (setq org-modern-list
+          '((?+ . "•")
+            (?* . "◆")
+            (?1 . "◦")))
+    (global-org-modern-mode))
 
-    (global-set-key (kbd "C-c C-o") 'my/open-org-directory)
+  ;; --- Stylized Typography & Bullets -------------------------------------------
+  (use-package org-superstar
+    :ensure t
+    :after org
+    :hook (org-mode . org-superstar-mode)
+    :config
+    (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿" "●" "○" "◆" "◇")
+          org-superstar-item-bullet-alist '((?+ . "•") (?- . "•") (?* . "•"))))
 
-    ;;Open dotfiles directory
-    (defun my/open-dotfiles ()
-      "Open the ~/dotfiles directory in dired."
-      (interactive)
-      (dired "~/dotfiles"))
+  ;; --- Centered Distraction-Free Canvas ----------------------------------------
+  (use-package olivetti
+    :ensure t
+    :hook
+    (org-mode . olivetti-mode)
+    (org-agenda-mode . olivetti-mode)
+    :custom
+    (olivetti-body-width 90))
 
-    (global-set-key (kbd "C-c d") 'my/open-dotfiles)
+  ;; --- Image Drag-and-Drop Pipeline --------------------------------------------
+  (use-package org-download
+    :ensure t
+    :custom
+    (org-download-heading-lvl nil)
+    (org-download-image-org-width 350)
+    (org-download-timestamp "%Y%m%d-%H%M%S")
+    (org-download-screenshot-method
+     (cond ((executable-find "grim") "grim -g \"$(slurp)\" %s")
+           ((executable-find "maim") "maim -s %s")
+           ((executable-find "spectacle") "spectacle -rb %s")))
+    (org-download-edit-cmd
+     (cond ((executable-find "krita") "krita %s")
+           ((executable-find "gimp") "gimp %s")
+           ((executable-find "eog") "eog %s")))
+    (org-download-method 'directory)
+    (org-download-backend 'curl)
+    (org-download-display-inline-images t)
+    (org-download-annotate-function nil))
+
+  ;; --- Image Capture & Clipboard Keybindings -----------------------------------
+  (with-eval-after-load 'org
+    (define-key org-mode-map (kbd "C-c C-s") 'org-download-screenshot)
+    (define-key org-mode-map (kbd "C-c C-y") 'org-download-yank))
+
 
 #+END_SRC
 
-** Code Execution
-#+BEGIN_SRC emacs-lisp
-  (defun omer/run-python ()
-    "Run current Python file."
-    (interactive)
-    (unless (string= (file-name-extension (buffer-file-name)) "py")
-      (user-error "Not a Python file"))
-    (save-buffer)
-    (python-shell-send-buffer)
-    (python-shell-switch-to-shell))
-
-  (global-set-key (kbd "C-c p") #'omer/run-python)
-
-  (defun omer/run-c ()
-    "Compile and run C code."
-    (interactive)
-    (unless (string= (file-name-extension (buffer-file-name)) "c")
-      (user-error "Not a C file"))
-    (save-buffer)
-    (let ((output (file-name-sans-extension (buffer-file-name))))
-      (async-shell-command
-       (format "gcc %s -o %s && %s"
-               (shell-quote-argument (buffer-file-name))
-               (shell-quote-argument output)
-               (shell-quote-argument output))
-       "*C Output*")
-      (switch-to-buffer-other-window "*C Output*")))
-
-  (global-set-key (kbd "C-c c") #'omer/run-c)
-
-  (defun omer/run-rust ()
-    "Run `cargo run` for current Rust project."
-    (interactive)
-    (unless (string= (file-name-extension (buffer-file-name)) "rs")
-      (user-error "Not a Rust file"))
-    (save-buffer)
-    (let ((default-directory
-           (or (locate-dominating-file default-directory "Cargo.toml")
-               (user-error "Not inside a Cargo project"))))
-      (let ((buf (get-buffer-create "*Rust Terminal*")))
-        (switch-to-buffer-other-window buf)
-        (unless (derived-mode-p 'vterm-mode)
-          (vterm-mode))
-        (vterm-send-string "cargo run")
-        (vterm-send-return))))
-
-  (global-set-key (kbd "C-c r") #'omer/run-rust)
-
-  (defun omer/run-lua ()
-    "Run current Lua file."
-    (interactive)
-    (unless (string= (file-name-extension (buffer-file-name)) "lua")
-      (user-error "Not a Lua file"))
-    (save-buffer)
-    (async-shell-command
-     (format "lua %s" (shell-quote-argument (buffer-file-name)))
-     "*Lua Output*")
-    (switch-to-buffer-other-window "*Lua Output*"))
-
-  (global-set-key (kbd "C-c l") #'omer/run-lua)
-
-  (defun omer/run-lisp ()
-    "Evaluate Common Lisp buffer using SLY."
-    (interactive)
-    (unless (derived-mode-p 'lisp-mode)
-      (user-error "Not a Common Lisp buffer"))
-    (sly-eval-buffer))
-
-  (global-set-key (kbd "C-c e") #'omer/run-lisp)
-
-
-#+END_SRC
-** Buffer
-#+BEGIN_SRC emacs-lisp
-  ;; Swap bindings
-  (global-set-key (kbd "C-x C-s") 'isearch-forward)
-  (global-set-key (kbd "C-s") 'save-buffer)
-
-
-  (global-set-key (kbd "C-<tab>") #'switch-to-buffer)
-
-  (global-set-key (kbd "C-x C-b") 'ibuffer)
-
-
-  (defun my/dired-open-file ()
-    "Open file at point. Use async external viewer for media/docs, normal for text files."
-    (interactive)
-    (let* ((file (dired-get-filename nil t))
-           (ext (and file (file-name-extension file))))
-      (if (and ext (member (downcase ext)
-                           '("pdf" "mp4" "mkv" "avi" "mov" "mp3" "flac"
-                             "wav" "ogg" "m4a" "webm" "doc" "docx"
-                             "xls" "xlsx" "ppt" "pptx")))
-          (start-process "dired-open" nil "xdg-open" file)
-        (dired-find-file))))
-
-  (with-eval-after-load 'dired
-    (define-key dired-mode-map (kbd "RET") 'my/dired-open-file))
-
-  (defun my-open-in-gwenview-rs ()
-    "Open the file under cursor in Dired using gwenview-rs."
-    (interactive)
-    (let ((file (dired-get-file-for-visit)))
-      (start-process "gwenview-rs" nil "gwenview-rs" file)))
-
-  ;; Bind it to 'V' in Dired mode
-  (with-eval-after-load 'dired
-    (define-key dired-mode-map (kbd "v") 'my-open-in-gwenview-rs))
-
-  ;; Optional: Make Backspace delete backward (if you're having issues)
-  (keyboard-translate ?\C-h ?\C-?)  ; This swaps DEL and C-h - likely NOT what you want
-#+END_SRC
 * Programming
 #+BEGIN_SRC emacs-lisp
-  ;; ==============================================================================
-  ;; 1. AUTO-CONNECT TREE-SITTER MAJOR MODES
-  ;; ==============================================================================
-  ;; Automatically swap traditional major modes for their Tree-sitter counterparts
+
+  ;; =============================================================================
+  ;; TREE-SITTER MAJOR MODE REMAPPING
+  ;; =============================================================================
+
+  ;; --- Major Mode Remap Alist --------------------------------------------------
   (setq major-mode-remap-alist
         '((python-mode     . python-ts-mode)
           (rust-mode       . rust-ts-mode)
@@ -676,49 +626,47 @@
           (tsx-mode        . tsx-ts-mode)
           (bash-mode       . bash-ts-mode)
           (c-mode          . c-ts-mode)
-  		(nix-mode        . nix-ts-mode)
+          (nix-mode        . nix-ts-mode)
           (c++-mode        . c++-ts-mode)))
 
-  ;; Hard-map file extensions to guarantee they open in Tree-sitter mode
+  ;; --- Auto Mode File Extensions -----------------------------------------------
   (add-to-list 'auto-mode-alist '("\\.py\\'" . python-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
 
-  ;; ==============================================================================
-  ;; 2. REGISTER LANGUAGE SERVERS IN EGLOT
-  ;; ==============================================================================
+
+  ;; =============================================================================
+  ;; EGLOT LSP CLIENT CONFIGURATION
+  ;; =============================================================================
+
+  ;; --- Language Server Programs Registry ---------------------------------------
   (with-eval-after-load 'eglot
-    ;; Register Rust
     (add-to-list 'eglot-server-programs
                  '(rust-ts-mode . ("rust-analyzer")))
-
-    ;; Register Python
     (add-to-list 'eglot-server-programs
                  '(python-ts-mode . ("pyright-langserver" "--stdio")))
-
     (add-to-list 'eglot-server-programs
-             '(nix-ts-mode . ("nil")))
-
-    ;; Register TypeScript & TSX
+                 '(nix-ts-mode . ("nil")))
     (add-to-list 'eglot-server-programs
                  '((typescript-ts-mode tsx-ts-mode) . ("typescript-language-server" "--stdio"))))
 
 
-  ;; ==============================================================================
-  ;; 3. THE NIXOS SMART AUTOMATION (POLLING LOOKUP - FIXED FOR EMACS 30)
-  ;; ==============================================================================
+  ;; =============================================================================
+  ;; NIXOS ENVRC PATH POLLING AUTOMATION
+  ;; =============================================================================
+
+  ;; --- Asynchronous Path Polling -----------------------------------------------
   (defun my/auto-start-eglot-when-path-ready (buffer program-name)
     "Poll the buffer until envrc injects the path containing PROGRAM-NAME, then start Eglot."
     (when (buffer-live-p buffer)
       (with-current-buffer buffer
         (if (executable-find program-name)
-            ;; The language server binary is finally found in the PATH! Start Eglot.
             (eglot-ensure)
-          ;; Binary not found yet, check again in 0.1 seconds
           (run-with-timer 0.1 nil #'my/auto-start-eglot-when-path-ready buffer program-name)))))
 
+  ;; --- Environment Initialization Selector -------------------------------------
   (defun my/trigger-nix-eglot-sequence ()
     "Initialize envrc and figure out which binary to watch for based on major-mode."
     (envrc-mode 1)
@@ -726,17 +674,17 @@
                         ((derived-mode-p 'rust-ts-mode) "rust-analyzer")
                         ((derived-mode-p 'python-ts-mode) "pyright-langserver")
                         ((derived-mode-p 'typescript-ts-mode) "typescript-language-server")
-  					  ((derived-mode-p 'nix-ts-mode) "nil")
+                        ((derived-mode-p 'nix-ts-mode) "nil")
                         ((derived-mode-p 'tsx-ts-mode) "typescript-language-server"))))
       (when binary-name
         (my/auto-start-eglot-when-path-ready (current-buffer) binary-name))))
 
-  ;; Assign our clean polling sequence directly to your major modes
+  ;; --- Major Mode Initialization Hooks -----------------------------------------
   (add-hook 'rust-ts-mode-hook       #'my/trigger-nix-eglot-sequence)
   (add-hook 'python-ts-mode-hook     #'my/trigger-nix-eglot-sequence)
   (add-hook 'typescript-ts-mode-hook #'my/trigger-nix-eglot-sequence)
   (add-hook 'tsx-ts-mode-hook        #'my/trigger-nix-eglot-sequence)
-  (add-hook 'nix-ts-mode-hook #'my/trigger-nix-eglot-sequence)
+  (add-hook 'nix-ts-mode-hook        #'my/trigger-nix-eglot-sequence)
 
 #+END_SRC
 
@@ -744,37 +692,27 @@
 
 #+BEGIN_SRC emacs-lisp
 
-;; ==============================================================================
-;; 4. CORFU (COMPLETION UI OVERLAY)
-;; ==============================================================================
-(use-package corfu
-  :ensure t
-  ;; Optional: Enable Corfu globally
-  :init
-  (global-corfu-mode 1)
-  :custom
-  (corfu-auto t)                 ;; Enable auto-completion popups
-  (corfu-auto-delay 0.1)         ;; Show popup almost instantly
-  (corfu-auto-prefix 1)          ;; Show popup after typing just 1 character
-  (corfu-quit-no-match 'separator) ;; Aggressively close popup if no match found
+  ;; --- CORFU COMPLETION OVERLAY UI -----------------------------------------
+  (use-package corfu
+    :ensure t
+    :init
+    (global-corfu-mode 1)
+    :custom
+    (corfu-auto t)
+    (corfu-auto-delay 0.1)
+    (corfu-auto-prefix 1)
+    (corfu-quit-no-match 'separator)
+    :bind
+    (:map corfu-map
+          ("SPC" . corfu-insert-separator)
+          ("<escape>" . corfu-quit)))
 
-  ;; Optional: Enable Corfu in the minibuffer / Eshell if desired
-  :bind
-  (:map corfu-map
-        ("SPC" . corfu-insert-separator) ;; Allows filtering by spaces (orderless)
-        ("<escape>" . corfu-quit)))
-
-;; ==============================================================================
-;; 5. CAPE (COMPLETION BACKENDS EXTENSION)
-;; ==============================================================================
-(use-package cape
-  :ensure t
-  :init
-  ;; Add useful backends to the global completion-at-point list
-  ;; Eglot automatically adds its own backend, so these complement it!
-  (add-to-list 'completion-at-point-functions #'cape-file)      ;; Complete file paths
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev)   ;; Complete words seen in open buffers
-  (add-to-list 'completion-at-point-functions #'cape-keyword))  ;; Complete programming language keywords
-
+  ;; --- Modular Backend Injection -----------------------------------------------
+  (use-package cape
+    :ensure t
+    :init
+    (add-to-list 'completion-at-point-functions #'cape-file)
+    (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+    (add-to-list 'completion-at-point-functions #'cape-keyword))
 
 #+END_SRC
