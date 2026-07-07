@@ -3,25 +3,25 @@ font-family = "Iosevka"
 font-size = 14
 #font-style = ""
 
+# Cursor Customization
 cursor-style = block
 cursor-style-blink = true
 
-# This prevents the shell from telling Ghostty to use a line cursor
+# Prevent shell scripts or runtime integrations from changing the cursor shape 
 shell-integration-features = no-cursor
 
-
-# Appearance
+# Window Aesthetics & Theme 
+theme = "Black Metal (Dark Funeral)"
 background-opacity = 0.9
-background-blur-radius = 20
 background-blur = true
+background-blur-radius = 20
 
-# Keybindings
-# Maps Ctrl+C to Copy and Ctrl+V to Paste
+# Copy/Paste Keybindings
 keybind = ctrl+c=copy_to_clipboard
 keybind = ctrl+v=paste_from_clipboard
 
-# Maps Ctrl+Shift+C to stop commands (SIGINT)
+# Interrupt running processes 
 keybind = ctrl+shift+c=text:\x03
 
-theme = "Black Metal (Dark Funeral)"
+# Fullscreen toggle
 keybind = f11=toggle_fullscreen
