@@ -20,7 +20,7 @@ window#waybar {
 #tray,
 #custom-reboot,
 #custom-shutdown {
-    background-color: rgba(10, 14, 14, 0.7);
+    background-color: rgba(46, 54, 54, 0.7);
     color: #e4e7f2;
     padding: 0 12px;
     margin: 4px 2px;

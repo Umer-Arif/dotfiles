@@ -23,7 +23,7 @@
 #+END_SRC
 
 * UI
-#+BEGIN_SRC emacs-lisp
+#+begin_SRC emacs-lisp
 
   ;; --- Don't show splash screen ------------------------------------------------
   (setq-default inhibit-startup-message t)
@@ -63,7 +63,7 @@
   (add-hook 'focus-out-hook #'me/garbage-collect-maybe)
 
   ;; --- Make frame 90% transparent ----------------------------------------------
-  (add-to-list 'default-frame-alist '(alpha-background . 0.9))
+  (add-to-list 'default-frame-alist '(alpha-background . 1.0))
 
   ;; --- Auto-trim trailing spaces when saving without asking confirmation --------
   (add-to-list 'safe-local-variable-values
@@ -141,7 +141,7 @@
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/t1-emacs-themes")
 
   ;; Load the specific dark theme flavor
-  (load-theme 'omer-kaolin-dark)
+  (load-theme 'firecode)
 
 #+END_SRC
 * Keybinds

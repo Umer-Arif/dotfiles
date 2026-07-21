@@ -2,12 +2,13 @@
 # your system. Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
+    inputs.mangowm.nixosModules.mango
   ];
 
   # Bootloader.
@@ -50,6 +51,10 @@
 
   # Enable the X11 windowing system & KDE Plasma Desktop
   services.xserver.enable = false;
+
+  services.desktopManager.plasma6.enable = true;
+  services.displayManager.sddm.enable = true;
+
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -102,6 +107,8 @@
 
   # Install Niri
   programs.niri.enable = true ;
+  
+  programs.mango.enable = true;
 
   # Install the hyprlock package
   programs.hyprlock.enable = true;
@@ -122,7 +129,7 @@
     aria2
     yt-dlp
     pkgs.emacs-pgtk
-	  waybar
+	waybar
 	  fuzzel
 	  xwayland-satellite
 	  mako          
@@ -149,6 +156,7 @@
     brightnessctl
     vscodium
     pkgs.gowall
+	libreoffice
   ];
 
     # Make sure everything is enclosed inside fonts = { ... };
@@ -251,8 +259,7 @@ xdg.portal = {
   services.udev.packages = [ pkgs.libmtp ];
 
 
-  # Kanata service setup
-  services.kanata = {
+   services.kanata = {
     enable = true;
     keyboards = {
       default = {
@@ -267,10 +274,11 @@ xdg.portal = {
           (deflayer default
             @capsec
           )
-        '';{}
+        '';
       };
     };
-  };
+  }; # <--- Added semicolon here
+
 
   # System baseline settings and Flake features
   system.stateVersion = "26.05";

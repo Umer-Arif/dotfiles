@@ -12,7 +12,7 @@ shell-integration-features = no-cursor
 
 # Window Aesthetics & Theme 
 theme = "Black Metal (Dark Funeral)"
-background-opacity = 0.9
+background-opacity = 1.0
 background-blur = true
 background-blur-radius = 20
 

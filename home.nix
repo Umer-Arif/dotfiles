@@ -36,6 +36,8 @@
     
     ".config/fastfetch".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/fastfetch/.config/fasfetch";
 
+     #".config/mango".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/fastfetch/.config/mango";
+
 };
 
   

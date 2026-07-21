@@ -4,6 +4,11 @@
     inputs = {
       # Uses the absolute latest bleeding-edge packages
       nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+      
+      mangowm = {
+      url = "github:mangowm/mango";
+      inputs.nixpkgs.follows = "nixpkgs";
+      };
 
       # Track the matching unstable branch for Home Manager
       home-manager.url = "github:nix-community/home-manager";
@@ -15,6 +20,10 @@
         # Matches your computer's hostname
         omer = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
+
+          specialArgs = { inherit inputs; };
+
+
           modules = [
             ./hardware-configuration.nix
             ./configuration.nix
